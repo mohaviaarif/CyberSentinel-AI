@@ -1,5 +1,6 @@
-backend/cyberenv/
+# Python virtual environment
+cyberenv/
 __pycache__/
 *.pyc
-.env
-
+*.pyo
+*.pyd

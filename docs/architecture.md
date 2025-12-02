@@ -10,3 +10,4 @@
 
 ## Environment
 - cyberenv virtual environment located inside /backend
+cd
