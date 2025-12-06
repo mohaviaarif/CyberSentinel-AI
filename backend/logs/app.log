@@ -1,0 +1,133 @@
+2025-12-03 21:22:03,669 - INFO - Prediction request received
+2025-12-03 21:22:03,669 - INFO - Running prediction pipeline...
+2025-12-04 08:56:07,049 - WARNING - Validation failed: request not JSON
+2025-12-04 08:56:48,095 - WARNING - Validation failed: request not JSON
+2025-12-04 08:57:08,678 - WARNING - Validation failed: request not JSON
+2025-12-04 08:57:35,192 - WARNING - Validation failed: missing 'email_text' field
+2025-12-04 08:57:56,156 - WARNING - Validation failed: empty email_text
+2025-12-04 08:58:13,815 - WARNING - Validation failed: empty email_text
+2025-12-04 08:58:27,127 - WARNING - Validation failed: non-string input for email_text
+2025-12-04 08:59:52,907 - INFO - Prediction request accepted
+2025-12-04 08:59:52,909 - INFO - Running prediction pipeline...
+2025-12-04 08:59:52,911 - INFO - Prediction completed successfully
+2025-12-04 09:00:54,029 - INFO - Prediction request accepted
+2025-12-04 09:00:54,029 - INFO - Running prediction pipeline...
+2025-12-04 09:00:54,031 - INFO - Prediction completed successfully
+2025-12-04 09:00:54,899 - INFO - Prediction request accepted
+2025-12-04 09:00:54,899 - INFO - Running prediction pipeline...
+2025-12-04 09:00:54,900 - INFO - Prediction completed successfully
+2025-12-04 09:04:26,876 - WARNING - Validation failed: request not JSON
+2025-12-04 13:46:16,958 - INFO - Prediction request accepted
+2025-12-04 13:46:16,958 - INFO - Running prediction pipeline...
+2025-12-04 13:46:16,970 - INFO - Prediction completed successfully
+2025-12-04 13:46:24,646 - WARNING - Validation failed: email_text too long
+2025-12-04 13:51:18,828 - INFO - Prediction request accepted
+2025-12-04 13:51:18,829 - ERROR - Prediction error: Simulated model crash
+2025-12-04 13:52:32,083 - WARNING - Validation failed: invalid JSON format
+2025-12-04 14:06:59,282 - WARNING - Validation failed: missing 'email_text' field
+2025-12-04 14:07:14,469 - WARNING - Validation failed: missing 'email_text' field
+2025-12-04 14:07:17,877 - WARNING - Validation failed: missing 'email_text' field
+2025-12-04 14:07:26,605 - WARNING - Validation failed: missing 'email_text' field
+2025-12-04 14:07:27,718 - WARNING - Validation failed: missing 'email_text' field
+2025-12-04 14:07:28,472 - WARNING - Validation failed: missing 'email_text' field
+2025-12-04 14:07:29,461 - WARNING - Validation failed: missing 'email_text' field
+2025-12-04 14:07:30,544 - WARNING - Validation failed: missing 'email_text' field
+2025-12-04 14:07:31,562 - WARNING - Validation failed: missing 'email_text' field
+2025-12-04 14:07:32,580 - WARNING - Validation failed: missing 'email_text' field
+2025-12-04 14:07:33,320 - WARNING - 429 - Rate limit exceeded
+2025-12-04 14:10:54,869 - WARNING - 413 - Payload too large
+2025-12-04 14:12:49,920 - WARNING - Validation failed: invalid JSON format
+2025-12-04 14:15:17,286 - WARNING - Validation failed: invalid JSON format
+2025-12-04 14:27:12,682 - INFO - Prediction request accepted
+2025-12-04 14:27:12,683 - INFO - Running prediction pipeline...
+2025-12-04 14:27:12,684 - INFO - Sanitized text: alert('HACKED') CLICK HERE NOW!!!
+2025-12-04 14:27:12,686 - INFO - Cleaned text: alerthacked click here now
+2025-12-04 14:27:12,691 - INFO - Prediction result: ham
+2025-12-04 14:27:12,692 - INFO - Prediction completed successfully
+2025-12-04 14:37:52,939 - INFO - Prediction request accepted
+2025-12-04 14:37:52,940 - INFO - Running prediction pipeline...
+2025-12-04 14:37:52,941 - INFO - Sanitized text: alert('HACKED') CLICK HERE NOW
+2025-12-04 14:37:52,941 - INFO - Cleaned text: alerthacked click here now
+2025-12-04 14:37:52,947 - INFO - Prediction result: ham
+2025-12-04 14:37:52,947 - INFO - Prediction completed successfully
+2025-12-04 14:38:58,069 - WARNING - Validation failed: invalid JSON format
+2025-12-04 14:39:01,961 - WARNING - Validation failed: invalid JSON format
+2025-12-04 14:39:20,155 - WARNING - Validation failed: missing 'email_text' field
+2025-12-04 14:39:39,423 - WARNING - Validation failed: non-string input for email_text
+2025-12-04 14:40:18,121 - WARNING - Validation failed: empty email_text
+2025-12-04 14:46:25,258 - WARNING - 404 - Route not found
+2025-12-04 14:47:51,908 - INFO - Home route accessed
+2025-12-04 14:48:08,603 - INFO - Home route accessed
+2025-12-04 14:48:10,462 - INFO - Home route accessed
+2025-12-04 14:48:11,231 - INFO - Home route accessed
+2025-12-04 14:48:11,928 - INFO - Home route accessed
+2025-12-04 14:48:12,559 - INFO - Home route accessed
+2025-12-04 14:48:13,166 - INFO - Home route accessed
+2025-12-04 14:48:13,774 - INFO - Home route accessed
+2025-12-04 14:48:14,462 - INFO - Home route accessed
+2025-12-04 14:48:15,094 - INFO - Home route accessed
+2025-12-04 14:48:15,685 - WARNING - 429 - Rate limit exceeded
+2025-12-04 14:48:16,268 - WARNING - 429 - Rate limit exceeded
+2025-12-04 14:50:06,579 - INFO - Prediction request accepted
+2025-12-04 14:50:06,579 - INFO - Running prediction pipeline...
+2025-12-04 14:50:06,580 - INFO - Sanitized text: Your PayPal account has been limited
+2025-12-04 14:50:06,580 - INFO - Cleaned text: your paypal account has been limited
+2025-12-04 14:50:06,584 - INFO - Prediction result: ham
+2025-12-04 14:50:06,584 - INFO - Prediction completed successfully
+2025-12-04 14:51:18,508 - INFO - Home route accessed
+2025-12-05 14:57:26,597 - INFO - RAW text received for prediction: Your PayPal account has been limited, verify your identity.
+
+2025-12-05 14:58:09,893 - INFO - RAW text received for prediction: Dear Customer,
+
+We detected unusual activity in your PayPal account and have temporarily limited your access. 
+To restore full access, please verify your identity immediately.
+
+Click the link below to continue:
+https://paypal-security-update.com/verify-account
+
+Failure to complete verification in the next 24 hours will result in permanent account suspension.
+
+Thank you,
+PayPal Security Team
+
+2025-12-05 14:58:33,419 - INFO - RAW text received for prediction: Hi,
+
+We detected a login attempt from an unknown device on your Instagram account.
+
+Device: Windows PC
+Location: Moscow, Russia
+Time: 2:14 AM
+
+If this was NOT you, secure your account immediately:
+https://instagram-security-check.net/reset-password
+
+Ignoring this will result in your account being permanently locked.
+
+Thanks,
+Instagram Support
+
+2025-12-05 15:00:29,654 - INFO - RAW text received for prediction: Your PayPal account has been limited
+2025-12-05 15:20:19,416 - INFO - Prediction pipeline running...
+2025-12-05 15:23:19,862 - INFO - Prediction pipeline running...
+2025-12-05 15:24:25,269 - INFO - Prediction pipeline running...
+2025-12-05 15:33:15,254 - INFO - Prediction pipeline running...
+2025-12-05 15:34:42,209 - INFO - Prediction pipeline running...
+2025-12-05 15:34:59,256 - INFO - Prediction pipeline running...
+2025-12-05 15:37:05,806 - INFO - Prediction pipeline running...
+2025-12-05 15:37:26,569 - INFO - Prediction pipeline running...
+2025-12-05 15:37:44,091 - INFO - Prediction pipeline running...
+2025-12-05 15:37:55,138 - INFO - Prediction pipeline running...
+2025-12-05 15:38:07,380 - INFO - Prediction pipeline running...
+2025-12-05 15:38:16,857 - INFO - Prediction pipeline running...
+2025-12-05 15:38:32,404 - INFO - Prediction pipeline running...
+2025-12-05 15:38:43,448 - INFO - Prediction pipeline running...
+2025-12-05 15:38:59,900 - INFO - Prediction pipeline running...
+2025-12-05 15:39:16,763 - INFO - Prediction pipeline running...
+2025-12-05 15:39:28,244 - INFO - Prediction pipeline running...
+2025-12-05 15:39:41,768 - INFO - Prediction pipeline running...
+2025-12-05 15:39:52,533 - INFO - Prediction pipeline running...
+2025-12-05 15:46:13,631 - INFO - Prediction pipeline running...
+2025-12-05 15:46:39,526 - INFO - Prediction pipeline running...
+2025-12-05 15:46:59,120 - INFO - Prediction pipeline running...
+2025-12-05 15:47:12,336 - INFO - Prediction pipeline running...
+2025-12-05 15:47:26,710 - INFO - Prediction pipeline running...

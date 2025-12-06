@@ -1,0 +1,16 @@
+body {
+  margin: 0;
+  font-family: 'Inter', 'Poppins', sans-serif;
+  background: #131b24;
+  color: #dbeafe;
+  min-height: 100vh;
+  transition: background 0.3s;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', 'Poppins', monospace;
+}
+
+* {
+  box-sizing: border-box;
+}

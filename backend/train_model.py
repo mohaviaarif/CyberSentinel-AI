@@ -1,49 +1,66 @@
 import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.feature_extraction.text import TfidfVectorizer
 import joblib
+import os
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report
 
-# Load cleaned dataset
-df = pd.read_csv("datasets/phishing_clean.csv")
-print("Dataset loaded, shape:", df.shape)
-print(df.head())
-# Features and labels
-X = df['email_text_clean']  # input text
-y = df['label']             # target label
+# ------------------------
+# Load dataset
+# ------------------------
+df = pd.read_csv("datasets/phishing_clean_balanced.csv")
 
-# Split: 80% train, 20% test, keeping label distribution
+# Fix NaN values (important)
+df["email_text_clean"] = df["email_text_clean"].fillna("")
+
+# Features + labels
+X = df["email_text_clean"]
+y = df["label"]
+
+# ------------------------
+# Train/test split
+# ------------------------
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42, stratify=y
 )
 
-print("X_train shape:", X_train.shape)
-print("X_test shape:", X_test.shape)
-print("y_train distribution:\n", y_train.value_counts())
-# Drop any rows where email_text_clean is NaN
-X_train = X_train.dropna()
-y_train = y_train[X_train.index]  # keep labels aligned
-
-X_test = X_test.dropna()
-y_test = y_test[X_test.index]  # keep labels aligned
-
-# Initialize TF-IDF vectorizer
-tfidf = TfidfVectorizer(
-    max_features=5000,      # limit vocab size
-    ngram_range=(1, 2),     # unigrams + bigrams
-    stop_words='english'    # remove common English words
+# ------------------------
+# TF-IDF Vectorizer (improved for phishing)
+# ------------------------
+vectorizer = TfidfVectorizer(
+    stop_words="english",
+    max_features=20000,      # more vocabulary → better signal detection
+    ngram_range=(1, 3)       # captures "account limited", "verify your account"
 )
 
-# Fit TF-IDF on training data
-X_train_tfidf = tfidf.fit_transform(X_train)
-X_test_tfidf = tfidf.transform(X_test)
+X_train_vec = vectorizer.fit_transform(X_train)
+X_test_vec = vectorizer.transform(X_test)
 
-print("TF-IDF transformation done.")
-print("Vocabulary size:", len(tfidf.vocabulary_))
+# ------------------------
+# Logistic Regression (balanced to fix low spam recall)
+# ------------------------
+model = LogisticRegression(
+    max_iter=4000,
+    class_weight="balanced"   # FIXES the ham bias
+)
 
-# Save the TF-IDF vectorizer for later use
-joblib.dump(tfidf, "models/tfidf_vectorizer.pkl")
-print("TF-IDF vectorizer saved to models/tfidf_vectorizer.pkl")
-# Quick verification
-print("Sample TF-IDF feature shape:", X_train_tfidf.shape)
-print("Sample first feature vector:\n", X_train_tfidf[0])
+model.fit(X_train_vec, y_train)
 
+# ------------------------
+# Evaluation
+# ------------------------
+preds = model.predict(X_test_vec)
+
+print("\nMODEL REPORT:\n")
+print(classification_report(y_test, preds))
+
+# ------------------------
+# Save model + vectorizer
+# ------------------------
+os.makedirs("backend/models", exist_ok=True)
+
+joblib.dump(vectorizer, "backend/models/tfidf_vectorizer.pkl")
+joblib.dump(model, "backend/models/best_model.pkl")
+
+print("\nModel + vectorizer saved successfully!")
