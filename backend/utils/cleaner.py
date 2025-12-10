@@ -1,15 +1,12 @@
 import re
 
-
 # -----------------------------------------
-# STEP 5 - SECURITY SANITIZATION
+# STEP 1 - SECURITY SANITIZATION
 # -----------------------------------------
 def sanitize_input(text):
     """
-    First security layer before ML cleaning:
-    - Strip HTML tags (<b>, <div>, <script>, etc.)
-    - Remove the word 'script' (any casing)
-    - Remove non-printable / control characters
+    Remove HTML tags and dangerous script content.
+    DO NOT remove URLs or domain names.
     """
 
     if not isinstance(text, str):
@@ -18,46 +15,39 @@ def sanitize_input(text):
     # Remove HTML tags
     text = re.sub(r"<.*?>", "", text)
 
-    # Remove "script" in ANY casing (script, SCRIPT, ScRiPt)
+    # Remove the word 'script' (XSS protection)
     text = re.sub(r"(?i)script", "", text)
 
-    # Remove stray invisible characters
+    # Keep everything else (URLs, punctuation, numbers)
     text = ''.join(ch for ch in text if ch.isprintable())
 
     return text
 
 
 # -----------------------------------------
-# NORMAL CLEANING (ML PREPROCESSING)
+# STEP 2 - ML CLEANING (Light-touch)
 # -----------------------------------------
 def clean_text(text):
     """
-    Main cleaning pipeline used by the ML model:
-    - Lowercase
-    - Remove URLs
-    - Remove leftover HTML tags
-    - Remove numbers
-    - Remove punctuation
-    - Remove extra spaces
+    Much lighter cleaning:
+    - lowercase
+    - keep URLs (VERY important for phishing)
+    - keep punctuation inside URLs
+    - remove only useless punctuation around words
+    - keep numbers (important for phishing)
     """
 
     if not isinstance(text, str):
         text = str(text)
 
-    # Lowercase
     text = text.lower()
 
-    # Remove URLs
-    text = re.sub(r"http\S+|www\S+", "", text)
+    # KEEP URLs — turn them into URLTOKEN instead
+    text = re.sub(r"http\S+", " urltoken ", text)
+    text = re.sub(r"www\.\S+", " urltoken ", text)
 
-    # Remove any HTML (fallback — sanitization handles most)
-    text = re.sub(r"<.*?>", "", text)
-
-    # Remove numbers
-    text = re.sub(r"\d+", "", text)
-
-    # Remove punctuation
-    text = re.sub(r"[^\w\s]", "", text)
+    # Remove punctuation EXCEPT inside URLs (already tokenized)
+    text = re.sub(r"[^\w\s]", " ", text)
 
     # Remove extra spaces
     text = " ".join(text.split())

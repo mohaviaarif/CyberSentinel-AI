@@ -1,117 +1,226 @@
-import React from 'react';
+import React from "react";
+import {
+  FaBrain,
+  FaBolt,
+  FaShieldAlt,
+  FaEnvelopeOpen,
+  FaLink,
+  FaPaperclip,
+  FaChartLine,
+  FaGlobe,
+  FaBuilding,
+  FaSyncAlt,
+  FaChartPie,
+} from "react-icons/fa";
 
-export function FeaturesPage() {
+function FeaturesPage() {
   return (
     <div className="features-page-pro">
       <h1 className="main-title-pro">Core Features</h1>
-      
-      <p style={{fontSize: '1.1em', color: '#A4C7EC', marginBottom: '2.5em', lineHeight: 1.8}}>
-        Cyber Sentinell combines multiple advanced security technologies to provide comprehensive email threat detection. Each feature is designed to catch different categories of attacks and social engineering tactics.
+
+      <p
+        style={{
+          fontSize: "1.08em",
+          color: "#A4C7EC",
+          marginBottom: "2.5em",
+          lineHeight: 1.8,
+        }}
+      >
+        Cyber Sentinel uses advanced AI + real-time threat intelligence to detect
+        phishing, malware, social engineering, and dangerous links — all within
+        seconds. Built for accuracy. Designed for simplicity.
       </p>
 
+      {/* ------------------ FEATURE GRID --------------------- */}
       <ul className="features-list-pro">
+
         <li>
-          <strong>🧠 Deep Neural Network Analysis</strong><br/>
-          Multi-layered machine learning models analyze email content, sender behavior, and metadata patterns. Our models have been trained on millions of legitimate and malicious emails to recognize subtle indicators of phishing and spam attacks.
+          <span style={{ fontSize: "1.8em" }}><FaBrain /></span><br />
+          <strong>Deep Neural Network Analysis</strong>
+          <br />
+          Our multi-layer AI models detect hidden phishing patterns, spoofing behavior,
+          and deceptive writing styles beyond human recognition.
         </li>
-        
+
         <li>
-          <strong>⚡ Real-Time Processing</strong><br/>
-          Results delivered in milliseconds using optimized processing pipelines and distributed computing infrastructure. No waiting – get instant verdicts while you're reading your email.
+          <span style={{ fontSize: "1.8em" }}><FaBolt /></span><br />
+          <strong>Real-Time Processing</strong>
+          <br />
+          Get instant results — most analyses complete in under 500ms thanks to
+          highly optimized inference pipelines.
         </li>
-        
+
         <li>
-          <strong>🎯 Phishing Detection</strong><br/>
-          Advanced heuristics detect social engineering tactics, credential harvesting attempts, and spoofed sender addresses. Identifies common phishing templates and new attack patterns automatically.
+          <span style={{ fontSize: "1.8em" }}><FaShieldAlt /></span><br />
+          <strong>Phishing Detection Engine</strong>
+          <br />
+          Detects credential harvesting, scam patterns, fake branding, and
+          social-engineering attempts using dynamic heuristics.
         </li>
-        
+
         <li>
-          <strong>📧 Email Header Analysis</strong><br/>
-          Deep inspection of email headers to detect spoofing attempts, check authentication status (SPF, DKIM, DMARC), and identify suspicious routing patterns that indicate compromised mail servers.
+          <span style={{ fontSize: "1.8em" }}><FaEnvelopeOpen /></span><br />
+          <strong>Email Header Inspection</strong>
+          <br />
+          Validates SPF, DKIM, DMARC, routing paths, and spoofing indicators to catch
+          impersonation attacks.
         </li>
-        
+
         <li>
-          <strong>🔗 URL & Link Analysis</strong><br/>
-          Every URL in an email is scanned for redirect chains, malicious domains, and phishing landing pages. Links are checked against threat intelligence databases in real-time.
+          <span style={{ fontSize: "1.8em" }}><FaLink /></span><br />
+          <strong>URL & Link Analysis</strong>
+          <br />
+          Every link is checked for redirects, malicious domains, phishing landing
+          pages, QR code traps, and open-redirect behavior.
         </li>
-        
+
         <li>
-          <strong>📎 Attachment Safety Check</strong><br/>
-          Analyzes attachment metadata for malware signatures, suspicious extensions, and known attack vectors. Detects potentially dangerous file types even when disguised with false extensions.
+          <span style={{ fontSize: "1.8em" }}><FaPaperclip /></span><br />
+          <strong>Attachment Safety Check</strong>
+          <br />
+          Detects dangerous extensions, macro-enabled documents, encrypted payloads, and
+          fake disguised file types.
         </li>
-        
+
         <li>
-          <strong>📊 Confidence Scoring</strong><br/>
-          Every detection includes a confidence score and detailed explanation of what indicators triggered the verdict. Understand exactly why an email was flagged as suspicious.
+          <span style={{ fontSize: "1.8em" }}><FaChartLine /></span><br />
+          <strong>Confidence Scoring</strong>
+          <br />
+          Get a clear numeric score + explanation so you know *exactly* what triggered
+          the detection.
         </li>
-        
+
         <li>
-          <strong>🌐 Multi-Language Support</strong><br/>
-          Natural language processing pipelines support multiple languages to detect phishing and social engineering attacks regardless of language or encoding tricks.
+          <span style={{ fontSize: "1.8em" }}><FaGlobe /></span><br />
+          <strong>Multi-Language Support</strong>
+          <br />
+          AI can detect phishing patterns in English, Urdu, Arabic, French, and more —
+          even when attackers mix languages.
         </li>
-        
+
         <li>
-          <strong>🏢 Enterprise Integration</strong><br/>
-          RESTful API for seamless integration with existing email systems. Role-based access control, audit trails, and compliance reporting for large organizations and managed service providers.
+          <span style={{ fontSize: "1.8em" }}><FaBuilding /></span><br />
+          <strong>Enterprise Integration</strong>
+          <br />
+          With REST API endpoints, audit logs, RBAC, and email pipeline hooks, Cyber
+          Sentinel integrates easily into enterprise environments.
         </li>
-        
+
         <li>
-          <strong>🔄 Continuous Learning</strong><br/>
-          Our models are updated daily with new threat intelligence. Machine learning algorithms learn from detection patterns to improve accuracy over time while maintaining explainability.
+          <span style={{ fontSize: "1.8em" }}><FaSyncAlt /></span><br />
+          <strong>Continuous Model Updates</strong>
+          <br />
+          Machine learning models are updated daily from global threat intelligence
+          feeds to catch the newest attack campaigns.
         </li>
-        
+
         <li>
-          <strong>📈 Advanced Reporting</strong><br/>
-          Comprehensive dashboards show threat trends, detection statistics, and security insights. Exportable reports help track phishing campaigns and security posture improvements.
+          <span style={{ fontSize: "1.8em" }}><FaChartPie /></span><br />
+          <strong>Advanced Reporting</strong>
+          <br />
+          Visual dashboards show detection trends, phishing campaigns, employee risk
+          exposure, and historical security insights.
         </li>
       </ul>
 
-      <section style={{marginTop: '3em', padding: '2.5em', background: 'rgba(41, 121, 255, 0.08)', border: '1px solid rgba(41, 121, 255, 0.2)', borderRadius: '1.8em'}}>
-        <h2 style={{color: '#2979FF', fontSize: '1.8em', marginTop: 0}}>Feature Comparison</h2>
-        <div style={{overflowX: 'auto', marginTop: '1.5em'}}>
-          <table style={{width: '100%', borderCollapse: 'collapse', color: '#B6D4FF'}}>
+      {/* ------------------ COMPARISON TABLE ----------------------- */}
+      <section
+        style={{
+          marginTop: "3em",
+          padding: "2.5em",
+          background: "rgba(41, 121, 255, 0.08)",
+          border: "1px solid rgba(41, 121, 255, 0.2)",
+          borderRadius: "1.8em",
+        }}
+      >
+        <h2 style={{ color: "#2979FF", fontSize: "1.8em", marginTop: 0 }}>
+          Feature Comparison
+        </h2>
+
+        <div style={{ overflowX: "auto", marginTop: "1.5em" }}>
+          <table
+            style={{
+              width: "100%",
+              borderCollapse: "collapse",
+              color: "#B6D4FF",
+            }}
+          >
             <thead>
-              <tr style={{borderBottom: '2px solid rgba(41, 121, 255, 0.3)'}}>
-                <th style={{textAlign: 'left', padding: '1em', color: '#00BFAE', fontWeight: 700}}>Feature</th>
-                <th style={{textAlign: 'center', padding: '1em', color: '#00BFAE', fontWeight: 700}}>Free Tier</th>
-                <th style={{textAlign: 'center', padding: '1em', color: '#00BFAE', fontWeight: 700}}>Enterprise</th>
+              <tr style={{ borderBottom: "2px solid rgba(41, 121, 255, 0.3)" }}>
+                <th
+                  style={{
+                    padding: "1em",
+                    textAlign: "left",
+                    color: "#00BFAE",
+                    fontWeight: 700,
+                  }}
+                >
+                  Feature
+                </th>
+                <th
+                  style={{
+                    padding: "1em",
+                    textAlign: "center",
+                    color: "#00BFAE",
+                    fontWeight: 700,
+                  }}
+                >
+                  Free Tier
+                </th>
+                <th
+                  style={{
+                    padding: "1em",
+                    textAlign: "center",
+                    color: "#00BFAE",
+                    fontWeight: 700,
+                  }}
+                >
+                  Enterprise
+                </th>
               </tr>
             </thead>
+
             <tbody>
-              <tr style={{borderBottom: '1px solid rgba(41, 121, 255, 0.15)'}}>
-                <td style={{padding: '1em'}}>Email Analysis</td>
-                <td style={{textAlign: 'center', padding: '1em'}}>✓</td>
-                <td style={{textAlign: 'center', padding: '1em'}}>✓</td>
+              <tr style={{ borderBottom: "1px solid rgba(41, 121, 255, 0.15)" }}>
+                <td style={{ padding: "1em" }}>Email Analysis</td>
+                <td style={{ textAlign: "center" }}>✓</td>
+                <td style={{ textAlign: "center" }}>✓</td>
               </tr>
-              <tr style={{borderBottom: '1px solid rgba(41, 121, 255, 0.15)'}}>
-                <td style={{padding: '1em'}}>Phishing Detection</td>
-                <td style={{textAlign: 'center', padding: '1em'}}>✓</td>
-                <td style={{textAlign: 'center', padding: '1em'}}>✓</td>
+
+              <tr style={{ borderBottom: "1px solid rgba(41, 121, 255, 0.15)" }}>
+                <td style={{ padding: "1em" }}>Phishing Detection</td>
+                <td style={{ textAlign: "center" }}>✓</td>
+                <td style={{ textAlign: "center" }}>✓</td>
               </tr>
-              <tr style={{borderBottom: '1px solid rgba(41, 121, 255, 0.15)'}}>
-                <td style={{padding: '1em'}}>Detailed Explanations</td>
-                <td style={{textAlign: 'center', padding: '1em'}}>✓</td>
-                <td style={{textAlign: 'center', padding: '1em'}}>✓</td>
+
+              <tr style={{ borderBottom: "1px solid rgba(41, 121, 255, 0.15)" }}>
+                <td style={{ padding: "1em" }}>Detailed Explanations</td>
+                <td style={{ textAlign: "center" }}>✓</td>
+                <td style={{ textAlign: "center" }}>✓</td>
               </tr>
-              <tr style={{borderBottom: '1px solid rgba(41, 121, 255, 0.15)'}}>
-                <td style={{padding: '1em'}}>API Access</td>
-                <td style={{textAlign: 'center', padding: '1em'}}>—</td>
-                <td style={{textAlign: 'center', padding: '1em'}}>✓</td>
+
+              <tr style={{ borderBottom: "1px solid rgba(41, 121, 255, 0.15)" }}>
+                <td style={{ padding: "1em" }}>API Access</td>
+                <td style={{ textAlign: "center" }}>—</td>
+                <td style={{ textAlign: "center" }}>✓</td>
               </tr>
-              <tr style={{borderBottom: '1px solid rgba(41, 121, 255, 0.15)'}}>
-                <td style={{padding: '1em'}}>Advanced Reporting</td>
-                <td style={{textAlign: 'center', padding: '1em'}}>—</td>
-                <td style={{textAlign: 'center', padding: '1em'}}>✓</td>
+
+              <tr style={{ borderBottom: "1px solid rgba(41, 121, 255, 0.15)" }}>
+                <td style={{ padding: "1em" }}>Advanced Reporting</td>
+                <td style={{ textAlign: "center" }}>—</td>
+                <td style={{ textAlign: "center" }}>✓</td>
               </tr>
-              <tr style={{borderBottom: '1px solid rgba(41, 121, 255, 0.15)'}}>
-                <td style={{padding: '1em'}}>Dedicated Support</td>
-                <td style={{textAlign: 'center', padding: '1em'}}>—</td>
-                <td style={{textAlign: 'center', padding: '1em'}}>✓</td>
+
+              <tr style={{ borderBottom: "1px solid rgba(41, 121, 255, 0.15)" }}>
+                <td style={{ padding: "1em" }}>Dedicated Support</td>
+                <td style={{ textAlign: "center" }}>—</td>
+                <td style={{ textAlign: "center" }}>✓</td>
               </tr>
+
               <tr>
-                <td style={{padding: '1em'}}>Custom Threat Rules</td>
-                <td style={{textAlign: 'center', padding: '1em'}}>—</td>
-                <td style={{textAlign: 'center', padding: '1em'}}>✓</td>
+                <td style={{ padding: "1em" }}>Custom Threat Rules</td>
+                <td style={{ textAlign: "center" }}>—</td>
+                <td style={{ textAlign: "center" }}>✓</td>
               </tr>
             </tbody>
           </table>

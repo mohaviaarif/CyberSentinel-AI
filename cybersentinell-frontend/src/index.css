@@ -1,16 +1,116 @@
-body {
+/* ------------------------------------------------------
+   🌌 GLOBAL BASE STYLES — Cyber Sentinel Premium Theme
+------------------------------------------------------- */
+
+:root {
+  --bg-main: #0f141a;
+  --bg-secondary: #141b24;
+  --text-primary: #dbeafe;
+  --text-secondary: #a4c7ec;
+  --accent-blue: #2979ff;
+  --accent-green: #00bfae;
+  --accent-red: #ff4c4c;
+  --radius-lg: 1.4em;
+  --radius-md: 0.9em;
+  --radius-sm: 0.5em;
+}
+
+/* Reset & Smoothing */
+* {
   margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Beautiful smooth font rendering */
+body {
   font-family: 'Inter', 'Poppins', sans-serif;
-  background: #131b24;
-  color: #dbeafe;
+  background: var(--bg-main);
+  color: var(--text-primary);
   min-height: 100vh;
-  transition: background 0.3s;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Soft gradient glow background */
+  background: radial-gradient(circle at top, rgba(41,121,255,0.12) 0%, transparent 65%),
+              radial-gradient(circle at bottom, rgba(0,191,174,0.08) 0%, transparent 75%),
+              var(--bg-main);
+
+  transition: background 0.4s ease, color 0.4s ease;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', 'Poppins', monospace;
+  font-family: 'Fira Code', 'Source Code Pro', Menlo, Monaco, Consolas, monospace;
+  background: rgba(255,255,255,0.08);
+  padding: 0.25em 0.5em;
+  border-radius: var(--radius-sm);
+  color: #93c5fd;
 }
 
-* {
-  box-sizing: border-box;
+/* ------------------------------------------------------
+   🌟 GLOBAL INTERACTION IMPROVEMENTS
+------------------------------------------------------- */
+
+/* Smooth link transitions */
+a {
+  color: var(--accent-blue);
+  transition: color 0.22s ease;
+}
+
+a:hover {
+  color: var(--accent-green);
+}
+
+/* Buttons default smoothness */
+button {
+  transition: all 0.25s ease;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  background: #1a2330;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2e3948;
+  border-radius: 12px;
+  border: 1px solid #39495c;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3e4f63;
+}
+
+/* Selection color */
+::selection {
+  background: rgba(41,121,255,0.3);
+  color: white;
+}
+
+/* ------------------------------------------------------
+   💫 GLOBAL ANIMATIONS
+------------------------------------------------------- */
+
+@keyframes fadeInSoft {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes scalePop {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
 }

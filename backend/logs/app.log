@@ -131,3 +131,529 @@ Instagram Support
 2025-12-05 15:46:59,120 - INFO - Prediction pipeline running...
 2025-12-05 15:47:12,336 - INFO - Prediction pipeline running...
 2025-12-05 15:47:26,710 - INFO - Prediction pipeline running...
+2025-12-06 14:15:07,684 - INFO - Prediction pipeline running...
+2025-12-06 14:15:46,249 - INFO - Prediction pipeline running...
+2025-12-06 14:16:10,676 - INFO - Prediction pipeline running...
+2025-12-06 14:16:51,168 - INFO - Prediction pipeline running...
+2025-12-06 14:17:23,036 - INFO - Prediction pipeline running...
+2025-12-06 14:17:59,586 - INFO - Prediction pipeline running...
+2025-12-06 14:18:35,716 - INFO - Prediction pipeline running...
+2025-12-06 14:19:06,235 - INFO - Prediction pipeline running...
+2025-12-06 14:19:32,892 - INFO - Prediction pipeline running...
+2025-12-06 14:20:01,128 - INFO - Prediction pipeline running...
+2025-12-06 14:20:29,522 - INFO - Prediction pipeline running...
+2025-12-06 14:21:12,053 - INFO - Prediction pipeline running...
+2025-12-06 14:21:41,155 - INFO - Prediction pipeline running...
+2025-12-06 14:22:14,815 - INFO - Prediction pipeline running...
+2025-12-06 14:23:34,311 - INFO - Prediction pipeline running...
+2025-12-06 14:24:00,230 - INFO - Prediction pipeline running...
+2025-12-06 14:24:25,338 - INFO - Prediction pipeline running...
+2025-12-06 14:25:20,010 - INFO - Prediction pipeline running...
+2025-12-06 14:25:49,396 - INFO - Prediction pipeline running...
+2025-12-06 14:33:52,365 - INFO - Prediction pipeline running...
+2025-12-06 14:35:43,066 - INFO - Prediction pipeline running...
+2025-12-06 14:36:08,769 - INFO - Prediction pipeline running...
+2025-12-06 14:40:05,806 - INFO - Prediction pipeline running...
+2025-12-06 14:40:09,953 - INFO - Prediction pipeline running...
+2025-12-06 14:51:04,389 - INFO - Prediction pipeline running...
+2025-12-06 14:51:07,444 - INFO - Prediction pipeline running...
+2025-12-06 14:56:42,961 - INFO - Prediction pipeline running...
+2025-12-06 14:57:27,448 - INFO - Prediction pipeline running...
+2025-12-06 14:59:19,334 - INFO - Prediction pipeline running...
+2025-12-06 14:59:20,799 - INFO - Prediction pipeline running...
+2025-12-06 14:59:24,052 - INFO - Prediction pipeline running...
+2025-12-06 15:00:44,581 - INFO - Prediction pipeline running...
+2025-12-06 15:01:31,577 - INFO - Prediction pipeline running...
+2025-12-06 15:02:07,945 - INFO - Prediction pipeline running...
+2025-12-06 15:02:46,429 - INFO - Prediction pipeline running...
+2025-12-06 15:03:19,431 - INFO - Prediction pipeline running...
+2025-12-06 15:03:43,798 - INFO - Prediction pipeline running...
+2025-12-06 15:04:11,557 - INFO - Prediction pipeline running...
+2025-12-06 15:05:01,065 - INFO - Prediction pipeline running...
+2025-12-06 15:05:10,404 - INFO - Prediction pipeline running...
+2025-12-06 15:05:27,279 - INFO - Prediction pipeline running...
+2025-12-06 15:05:39,020 - INFO - Prediction pipeline running...
+2025-12-06 15:05:51,761 - INFO - Prediction pipeline running...
+2025-12-06 15:27:11,817 - INFO - Prediction pipeline running...
+2025-12-06 15:27:32,449 - INFO - Prediction pipeline running...
+2025-12-06 15:27:52,808 - INFO - Prediction pipeline running...
+2025-12-06 15:30:52,033 - INFO - Prediction pipeline running...
+2025-12-06 15:31:01,064 - INFO - Prediction pipeline running...
+2025-12-06 15:31:12,496 - INFO - Prediction pipeline running...
+2025-12-06 15:31:27,523 - INFO - Prediction pipeline running...
+2025-12-06 15:31:38,650 - INFO - Prediction pipeline running...
+2025-12-06 15:31:48,945 - INFO - Prediction pipeline running...
+2025-12-06 15:32:01,447 - INFO - Prediction pipeline running...
+2025-12-06 15:32:12,902 - INFO - Prediction pipeline running...
+2025-12-06 15:32:22,859 - INFO - Prediction pipeline running...
+2025-12-06 15:32:32,116 - INFO - Prediction pipeline running...
+2025-12-06 15:32:45,680 - INFO - Prediction pipeline running...
+2025-12-06 15:32:58,891 - INFO - Prediction pipeline running...
+2025-12-06 15:36:04,960 - INFO - Prediction pipeline running...
+2025-12-06 15:36:23,736 - INFO - Prediction pipeline running...
+2025-12-06 15:36:42,125 - INFO - Prediction pipeline running...
+2025-12-06 15:38:32,025 - INFO - Prediction pipeline running...
+2025-12-06 15:38:43,528 - INFO - Prediction pipeline running...
+2025-12-06 15:39:01,495 - INFO - Prediction pipeline running...
+2025-12-06 15:42:56,731 - INFO - Prediction pipeline running...
+2025-12-06 15:42:58,328 - INFO - Prediction pipeline running...
+2025-12-06 15:43:12,229 - INFO - Prediction pipeline running...
+2025-12-06 15:43:21,339 - INFO - Prediction pipeline running...
+2025-12-06 15:48:41,006 - INFO - Prediction pipeline running...
+2025-12-06 15:48:46,510 - INFO - Prediction pipeline running...
+2025-12-06 15:49:13,745 - INFO - Prediction pipeline running...
+2025-12-06 15:49:49,886 - INFO - Prediction pipeline running...
+2025-12-06 15:50:03,484 - INFO - Prediction pipeline running...
+2025-12-06 15:50:21,926 - INFO - Prediction pipeline running...
+2025-12-07 13:55:39,226 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-07 13:55:39,226 - INFO - Incoming /predict request
+2025-12-07 13:55:39,226 - INFO - Validation passed. Sending to prediction_service...
+2025-12-07 13:55:39,227 - INFO - Prediction pipeline started.
+2025-12-07 13:55:39,234 - INFO - Prediction complete: label=ham, confidence=0.7688196050434979
+2025-12-07 13:55:39,235 - INFO - Prediction time: 0.008 seconds
+2025-12-07 13:55:39,235 - INFO - Prediction complete -> label=ham, confidence=0.7688196050434979
+2025-12-07 13:59:01,563 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-07 13:59:01,563 - INFO - Incoming /predict request
+2025-12-07 13:59:01,563 - INFO - Validation passed. Sending to prediction_service...
+2025-12-07 13:59:01,563 - INFO - Prediction pipeline started.
+2025-12-07 13:59:01,566 - INFO - Prediction complete: label=ham, confidence=0.7688196050434979
+2025-12-07 13:59:01,566 - INFO - Prediction time: 0.003 seconds
+2025-12-07 13:59:01,566 - INFO - Prediction complete -> label=ham, confidence=0.7688196050434979
+2025-12-07 13:59:26,185 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-07 13:59:26,186 - INFO - Incoming /predict request
+2025-12-07 13:59:26,186 - INFO - Validation passed. Sending to prediction_service...
+2025-12-07 13:59:26,186 - INFO - Prediction pipeline started.
+2025-12-07 13:59:26,196 - INFO - Prediction complete: label=ham, confidence=0.7772767483090254
+2025-12-07 13:59:26,197 - INFO - Prediction time: 0.011 seconds
+2025-12-07 13:59:26,197 - INFO - Prediction complete -> label=ham, confidence=0.7772767483090254
+2025-12-07 14:00:28,335 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-07 14:00:28,336 - INFO - Incoming /predict request
+2025-12-07 14:00:28,336 - INFO - Validation passed. Sending to prediction_service...
+2025-12-07 14:00:28,336 - INFO - Prediction pipeline started.
+2025-12-07 14:00:28,347 - INFO - Prediction complete: label=spam, confidence=0.9813488447812939
+2025-12-07 14:00:28,348 - INFO - Prediction time: 0.011 seconds
+2025-12-07 14:00:28,348 - INFO - Prediction complete -> label=spam, confidence=0.9813488447812939
+2025-12-07 14:00:51,290 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-07 14:00:51,290 - INFO - Incoming /predict request
+2025-12-07 14:00:51,291 - INFO - Validation passed. Sending to prediction_service...
+2025-12-07 14:00:51,291 - INFO - Prediction pipeline started.
+2025-12-07 14:00:51,299 - INFO - Prediction complete: label=spam, confidence=0.9813088675648272
+2025-12-07 14:00:51,299 - INFO - Prediction time: 0.008 seconds
+2025-12-07 14:00:51,299 - INFO - Prediction complete -> label=spam, confidence=0.9813088675648272
+2025-12-07 14:01:30,044 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-07 14:01:30,045 - INFO - Incoming /predict request
+2025-12-07 14:01:30,045 - INFO - Validation passed. Sending to prediction_service...
+2025-12-07 14:01:30,045 - INFO - Prediction pipeline started.
+2025-12-07 14:01:30,056 - INFO - Prediction complete: label=ham, confidence=0.8820391335902652
+2025-12-07 14:01:30,056 - INFO - Prediction time: 0.011 seconds
+2025-12-07 14:01:30,057 - INFO - Prediction complete -> label=ham, confidence=0.8820391335902652
+2025-12-07 14:07:31,357 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-07 14:07:31,357 - INFO - Incoming /predict request
+2025-12-07 14:07:31,358 - WARNING - Request failed: 'email_text' too long
+2025-12-07 14:08:46,945 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-07 14:08:46,945 - INFO - Incoming /predict request
+2025-12-07 14:08:46,945 - INFO - Validation passed. Sending to prediction_service...
+2025-12-07 14:08:46,945 - INFO - Prediction pipeline started.
+2025-12-07 14:08:46,953 - INFO - Prediction complete: label=ham, confidence=0.9448843943707812
+2025-12-07 14:08:46,953 - INFO - Prediction time: 0.008 seconds
+2025-12-07 14:08:46,953 - INFO - Prediction complete -> label=ham, confidence=0.9448843943707812
+2025-12-07 14:08:47,737 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-07 14:08:47,738 - INFO - Incoming /predict request
+2025-12-07 14:08:47,738 - INFO - Validation passed. Sending to prediction_service...
+2025-12-07 14:08:47,739 - INFO - Prediction pipeline started.
+2025-12-07 14:08:47,747 - INFO - Prediction complete: label=ham, confidence=0.9448843943707812
+2025-12-07 14:08:47,748 - INFO - Prediction time: 0.0105 seconds
+2025-12-07 14:08:47,748 - INFO - Prediction complete -> label=ham, confidence=0.9448843943707812
+2025-12-07 14:08:48,440 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-07 14:08:48,441 - INFO - Incoming /predict request
+2025-12-07 14:08:48,441 - INFO - Validation passed. Sending to prediction_service...
+2025-12-07 14:08:48,442 - INFO - Prediction pipeline started.
+2025-12-07 14:08:48,452 - INFO - Prediction complete: label=ham, confidence=0.9448843943707812
+2025-12-07 14:08:48,452 - INFO - Prediction time: 0.01 seconds
+2025-12-07 14:08:48,454 - INFO - Prediction complete -> label=ham, confidence=0.9448843943707812
+2025-12-07 14:08:49,111 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-07 14:08:49,112 - INFO - Incoming /predict request
+2025-12-07 14:08:49,113 - INFO - Validation passed. Sending to prediction_service...
+2025-12-07 14:08:49,113 - INFO - Prediction pipeline started.
+2025-12-07 14:08:49,126 - INFO - Prediction complete: label=ham, confidence=0.9448843943707812
+2025-12-07 14:08:49,127 - INFO - Prediction time: 0.0142 seconds
+2025-12-07 14:08:49,128 - INFO - Prediction complete -> label=ham, confidence=0.9448843943707812
+2025-12-07 14:08:49,843 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-07 14:08:49,844 - INFO - Incoming /predict request
+2025-12-07 14:08:49,844 - INFO - Validation passed. Sending to prediction_service...
+2025-12-07 14:08:49,845 - INFO - Prediction pipeline started.
+2025-12-07 14:08:49,859 - INFO - Prediction complete: label=ham, confidence=0.9448843943707812
+2025-12-07 14:08:49,859 - INFO - Prediction time: 0.0136 seconds
+2025-12-07 14:08:49,860 - INFO - Prediction complete -> label=ham, confidence=0.9448843943707812
+2025-12-07 14:08:50,497 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-07 14:08:50,497 - INFO - Incoming /predict request
+2025-12-07 14:08:50,497 - INFO - Validation passed. Sending to prediction_service...
+2025-12-07 14:08:50,499 - INFO - Prediction pipeline started.
+2025-12-07 14:08:50,510 - INFO - Prediction complete: label=ham, confidence=0.9448843943707812
+2025-12-07 14:08:50,511 - INFO - Prediction time: 0.0123 seconds
+2025-12-07 14:08:50,512 - INFO - Prediction complete -> label=ham, confidence=0.9448843943707812
+2025-12-07 14:08:51,167 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-07 14:08:51,168 - INFO - Incoming /predict request
+2025-12-07 14:08:51,169 - INFO - Validation passed. Sending to prediction_service...
+2025-12-07 14:08:51,169 - INFO - Prediction pipeline started.
+2025-12-07 14:08:51,180 - INFO - Prediction complete: label=ham, confidence=0.9448843943707812
+2025-12-07 14:08:51,180 - INFO - Prediction time: 0.0104 seconds
+2025-12-07 14:08:51,180 - INFO - Prediction complete -> label=ham, confidence=0.9448843943707812
+2025-12-07 14:08:51,825 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-07 14:08:51,825 - INFO - Incoming /predict request
+2025-12-07 14:08:51,826 - INFO - Validation passed. Sending to prediction_service...
+2025-12-07 14:08:51,826 - INFO - Prediction pipeline started.
+2025-12-07 14:08:51,839 - INFO - Prediction complete: label=ham, confidence=0.9448843943707812
+2025-12-07 14:08:51,840 - INFO - Prediction time: 0.0135 seconds
+2025-12-07 14:08:51,840 - INFO - Prediction complete -> label=ham, confidence=0.9448843943707812
+2025-12-07 14:08:52,512 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-07 14:08:52,513 - INFO - Incoming /predict request
+2025-12-07 14:08:52,513 - INFO - Validation passed. Sending to prediction_service...
+2025-12-07 14:08:52,513 - INFO - Prediction pipeline started.
+2025-12-07 14:08:52,529 - INFO - Prediction complete: label=ham, confidence=0.9448843943707812
+2025-12-07 14:08:52,530 - INFO - Prediction time: 0.017 seconds
+2025-12-07 14:08:52,531 - INFO - Prediction complete -> label=ham, confidence=0.9448843943707812
+2025-12-07 14:08:53,167 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-07 14:08:53,167 - INFO - Incoming /predict request
+2025-12-07 14:08:53,169 - INFO - Validation passed. Sending to prediction_service...
+2025-12-07 14:08:53,169 - INFO - Prediction pipeline started.
+2025-12-07 14:08:53,179 - INFO - Prediction complete: label=ham, confidence=0.9448843943707812
+2025-12-07 14:08:53,180 - INFO - Prediction time: 0.0109 seconds
+2025-12-07 14:08:53,180 - INFO - Prediction complete -> label=ham, confidence=0.9448843943707812
+2025-12-07 14:08:53,890 - WARNING - 429 - Rate limit exceeded
+2025-12-07 14:15:02,007 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-07 14:15:02,008 - INFO - Incoming /predict request
+2025-12-07 14:15:02,009 - INFO - Validation passed. Sending to prediction_service...
+2025-12-07 14:15:02,010 - INFO - Prediction pipeline started.
+2025-12-07 14:15:02,030 - INFO - Prediction complete: label=spam, confidence=0.8704748043990365
+2025-12-07 14:15:02,031 - INFO - Prediction time: 0.0204 seconds
+2025-12-07 14:15:02,032 - INFO - Prediction complete -> label=spam, confidence=0.8704748043990365
+2025-12-07 14:15:50,609 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-07 14:15:50,609 - INFO - Incoming /predict request
+2025-12-07 14:15:50,610 - INFO - Validation passed. Sending to prediction_service...
+2025-12-07 14:15:50,610 - INFO - Prediction pipeline started.
+2025-12-07 14:15:50,614 - INFO - Prediction complete: label=spam, confidence=0.9717343250337754
+2025-12-07 14:15:50,614 - INFO - Prediction time: 0.004 seconds
+2025-12-07 14:15:50,615 - INFO - Prediction complete -> label=spam, confidence=0.9717343250337754
+2025-12-07 14:16:32,995 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-07 14:16:32,995 - INFO - Incoming /predict request
+2025-12-07 14:16:32,995 - INFO - Validation passed. Sending to prediction_service...
+2025-12-07 14:16:32,995 - INFO - Prediction pipeline started.
+2025-12-07 14:16:33,002 - INFO - Prediction complete: label=spam, confidence=0.958231763294874
+2025-12-07 14:16:33,002 - INFO - Prediction time: 0.007 seconds
+2025-12-07 14:16:33,003 - INFO - Prediction complete -> label=spam, confidence=0.958231763294874
+2025-12-07 14:17:12,591 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-07 14:17:12,591 - INFO - Incoming /predict request
+2025-12-07 14:17:12,591 - INFO - Validation passed. Sending to prediction_service...
+2025-12-07 14:17:12,592 - INFO - Prediction pipeline started.
+2025-12-07 14:17:12,598 - INFO - Prediction complete: label=spam, confidence=0.9556321032245756
+2025-12-07 14:17:12,598 - INFO - Prediction time: 0.006 seconds
+2025-12-07 14:17:12,598 - INFO - Prediction complete -> label=spam, confidence=0.9556321032245756
+2025-12-07 14:18:51,771 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-07 14:18:51,771 - INFO - Incoming /predict request
+2025-12-07 14:18:51,772 - INFO - Validation passed. Sending to prediction_service...
+2025-12-07 14:18:51,772 - INFO - Prediction pipeline started.
+2025-12-07 14:18:51,780 - INFO - Prediction complete: label=ham, confidence=0.9761656600028398
+2025-12-07 14:18:51,781 - INFO - Prediction time: 0.0092 seconds
+2025-12-07 14:18:51,782 - INFO - Prediction complete -> label=ham, confidence=0.9761656600028398
+2025-12-07 14:19:00,171 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-07 14:19:00,171 - INFO - Incoming /predict request
+2025-12-07 14:19:00,172 - INFO - Validation passed. Sending to prediction_service...
+2025-12-07 14:19:00,172 - INFO - Prediction pipeline started.
+2025-12-07 14:19:00,176 - INFO - Prediction complete: label=ham, confidence=0.7875219991574195
+2025-12-07 14:19:00,176 - INFO - Prediction time: 0.0038 seconds
+2025-12-07 14:19:00,176 - INFO - Prediction complete -> label=ham, confidence=0.7875219991574195
+2025-12-07 14:19:08,157 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-07 14:19:08,157 - INFO - Incoming /predict request
+2025-12-07 14:19:08,157 - INFO - Validation passed. Sending to prediction_service...
+2025-12-07 14:19:08,157 - INFO - Prediction pipeline started.
+2025-12-07 14:19:08,164 - INFO - Prediction complete: label=ham, confidence=0.7138412782867264
+2025-12-07 14:19:08,164 - INFO - Prediction time: 0.0066 seconds
+2025-12-07 14:19:08,164 - INFO - Prediction complete -> label=ham, confidence=0.7138412782867264
+2025-12-07 14:19:16,798 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-07 14:19:16,798 - INFO - Incoming /predict request
+2025-12-07 14:19:16,798 - INFO - Validation passed. Sending to prediction_service...
+2025-12-07 14:19:16,798 - INFO - Prediction pipeline started.
+2025-12-07 14:19:16,802 - INFO - Prediction complete: label=spam, confidence=0.8963225513799971
+2025-12-07 14:19:16,802 - INFO - Prediction time: 0.0045 seconds
+2025-12-07 14:19:16,803 - INFO - Prediction complete -> label=spam, confidence=0.8963225513799971
+2025-12-07 14:19:29,126 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-07 14:19:29,126 - INFO - Incoming /predict request
+2025-12-07 14:19:29,127 - INFO - Validation passed. Sending to prediction_service...
+2025-12-07 14:19:29,127 - INFO - Prediction pipeline started.
+2025-12-07 14:19:29,136 - INFO - Prediction complete: label=spam, confidence=0.9205745598246037
+2025-12-07 14:19:29,137 - INFO - Prediction time: 0.009 seconds
+2025-12-07 14:19:29,137 - INFO - Prediction complete -> label=spam, confidence=0.9205745598246037
+2025-12-07 14:19:41,918 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-07 14:19:41,918 - INFO - Incoming /predict request
+2025-12-07 14:19:41,919 - INFO - Validation passed. Sending to prediction_service...
+2025-12-07 14:19:41,919 - INFO - Prediction pipeline started.
+2025-12-07 14:19:41,930 - INFO - Prediction complete: label=spam, confidence=0.9789485221957321
+2025-12-07 14:19:41,931 - INFO - Prediction time: 0.0106 seconds
+2025-12-07 14:19:41,931 - INFO - Prediction complete -> label=spam, confidence=0.9789485221957321
+2025-12-07 14:19:50,741 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-07 14:19:50,741 - INFO - Incoming /predict request
+2025-12-07 14:19:50,741 - INFO - Validation passed. Sending to prediction_service...
+2025-12-07 14:19:50,742 - INFO - Prediction pipeline started.
+2025-12-07 14:19:50,746 - INFO - Prediction complete: label=spam, confidence=0.9558049083543312
+2025-12-07 14:19:50,746 - INFO - Prediction time: 0.0054 seconds
+2025-12-07 14:19:50,746 - INFO - Prediction complete -> label=spam, confidence=0.9558049083543312
+2025-12-07 14:20:00,260 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-07 14:20:00,260 - INFO - Incoming /predict request
+2025-12-07 14:20:00,261 - INFO - Validation passed. Sending to prediction_service...
+2025-12-07 14:20:00,261 - INFO - Prediction pipeline started.
+2025-12-07 14:20:00,266 - INFO - Prediction complete: label=spam, confidence=0.9742621610257631
+2025-12-07 14:20:00,266 - INFO - Prediction time: 0.005 seconds
+2025-12-07 14:20:00,266 - INFO - Prediction complete -> label=spam, confidence=0.9742621610257631
+2025-12-07 14:20:08,460 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-07 14:20:08,460 - INFO - Incoming /predict request
+2025-12-07 14:20:08,461 - INFO - Validation passed. Sending to prediction_service...
+2025-12-07 14:20:08,461 - INFO - Prediction pipeline started.
+2025-12-07 14:20:08,468 - INFO - Prediction complete: label=spam, confidence=0.967336334147244
+2025-12-07 14:20:08,468 - INFO - Prediction time: 0.007 seconds
+2025-12-07 14:20:08,468 - INFO - Prediction complete -> label=spam, confidence=0.967336334147244
+2025-12-07 14:20:19,580 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-07 14:20:19,580 - INFO - Incoming /predict request
+2025-12-07 14:20:19,583 - INFO - Validation passed. Sending to prediction_service...
+2025-12-07 14:20:19,583 - INFO - Prediction pipeline started.
+2025-12-07 14:20:19,595 - INFO - Prediction complete: label=spam, confidence=0.9754228184995902
+2025-12-07 14:20:19,596 - INFO - Prediction time: 0.0131 seconds
+2025-12-07 14:20:19,597 - INFO - Prediction complete -> label=spam, confidence=0.9754228184995902
+2025-12-07 14:20:29,259 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-07 14:20:29,259 - INFO - Incoming /predict request
+2025-12-07 14:20:29,259 - INFO - Validation passed. Sending to prediction_service...
+2025-12-07 14:20:29,260 - INFO - Prediction pipeline started.
+2025-12-07 14:20:29,273 - INFO - Prediction complete: label=spam, confidence=0.9753675906783017
+2025-12-07 14:20:29,275 - INFO - Prediction time: 0.0144 seconds
+2025-12-07 14:20:29,276 - INFO - Prediction complete -> label=spam, confidence=0.9753675906783017
+2025-12-07 14:20:39,994 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-07 14:20:39,994 - INFO - Incoming /predict request
+2025-12-07 14:20:39,995 - INFO - Validation passed. Sending to prediction_service...
+2025-12-07 14:20:39,995 - INFO - Prediction pipeline started.
+2025-12-07 14:20:40,001 - INFO - Prediction complete: label=spam, confidence=0.9772205040035055
+2025-12-07 14:20:40,001 - INFO - Prediction time: 0.006 seconds
+2025-12-07 14:20:40,001 - INFO - Prediction complete -> label=spam, confidence=0.9772205040035055
+2025-12-07 14:20:47,814 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-07 14:20:47,814 - INFO - Incoming /predict request
+2025-12-07 14:20:47,814 - INFO - Validation passed. Sending to prediction_service...
+2025-12-07 14:20:47,814 - INFO - Prediction pipeline started.
+2025-12-07 14:20:47,818 - INFO - Prediction complete: label=spam, confidence=0.9670808093983139
+2025-12-07 14:20:47,818 - INFO - Prediction time: 0.004 seconds
+2025-12-07 14:20:47,818 - INFO - Prediction complete -> label=spam, confidence=0.9670808093983139
+2025-12-07 14:20:59,394 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-07 14:20:59,394 - INFO - Incoming /predict request
+2025-12-07 14:20:59,395 - INFO - Validation passed. Sending to prediction_service...
+2025-12-07 14:20:59,395 - INFO - Prediction pipeline started.
+2025-12-07 14:20:59,401 - INFO - Prediction complete: label=ham, confidence=0.9653334302130256
+2025-12-07 14:20:59,401 - INFO - Prediction time: 0.0059 seconds
+2025-12-07 14:20:59,402 - INFO - Prediction complete -> label=ham, confidence=0.9653334302130256
+2025-12-07 14:21:09,650 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-07 14:21:09,650 - INFO - Incoming /predict request
+2025-12-07 14:21:09,651 - INFO - Validation passed. Sending to prediction_service...
+2025-12-07 14:21:09,651 - INFO - Prediction pipeline started.
+2025-12-07 14:21:09,658 - INFO - Prediction complete: label=ham, confidence=0.9573094716408108
+2025-12-07 14:21:09,659 - INFO - Prediction time: 0.0079 seconds
+2025-12-07 14:21:09,659 - INFO - Prediction complete -> label=ham, confidence=0.9573094716408108
+2025-12-07 14:21:22,018 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-07 14:21:22,020 - INFO - Incoming /predict request
+2025-12-07 14:21:22,020 - INFO - Validation passed. Sending to prediction_service...
+2025-12-07 14:21:22,021 - INFO - Prediction pipeline started.
+2025-12-07 14:21:22,027 - INFO - Prediction complete: label=ham, confidence=0.9653334302130256
+2025-12-07 14:21:22,027 - INFO - Prediction time: 0.0065 seconds
+2025-12-07 14:21:22,027 - INFO - Prediction complete -> label=ham, confidence=0.9653334302130256
+2025-12-07 14:21:31,501 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-07 14:21:31,502 - INFO - Incoming /predict request
+2025-12-07 14:21:31,502 - INFO - Validation passed. Sending to prediction_service...
+2025-12-07 14:21:31,502 - INFO - Prediction pipeline started.
+2025-12-07 14:21:31,509 - INFO - Prediction complete: label=ham, confidence=0.9409312742317657
+2025-12-07 14:21:31,510 - INFO - Prediction time: 0.0084 seconds
+2025-12-07 14:21:31,510 - INFO - Prediction complete -> label=ham, confidence=0.9409312742317657
+2025-12-07 14:21:39,983 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-07 14:21:39,985 - INFO - Incoming /predict request
+2025-12-07 14:21:39,985 - INFO - Validation passed. Sending to prediction_service...
+2025-12-07 14:21:39,985 - INFO - Prediction pipeline started.
+2025-12-07 14:21:39,993 - INFO - Prediction complete: label=ham, confidence=0.6397339825908106
+2025-12-07 14:21:39,994 - INFO - Prediction time: 0.0092 seconds
+2025-12-07 14:21:39,995 - INFO - Prediction complete -> label=ham, confidence=0.6397339825908106
+2025-12-07 14:21:54,209 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-07 14:21:54,210 - INFO - Incoming /predict request
+2025-12-07 14:21:54,210 - INFO - Validation passed. Sending to prediction_service...
+2025-12-07 14:21:54,210 - INFO - Prediction pipeline started.
+2025-12-07 14:21:54,213 - INFO - Prediction complete: label=ham, confidence=0.9653334302130256
+2025-12-07 14:21:54,213 - INFO - Prediction time: 0.003 seconds
+2025-12-07 14:21:54,214 - INFO - Prediction complete -> label=ham, confidence=0.9653334302130256
+2025-12-07 14:22:05,821 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-07 14:22:05,821 - INFO - Incoming /predict request
+2025-12-07 14:22:05,822 - INFO - Validation passed. Sending to prediction_service...
+2025-12-07 14:22:05,822 - INFO - Prediction pipeline started.
+2025-12-07 14:22:05,825 - INFO - Prediction complete: label=spam, confidence=0.9407501234022666
+2025-12-07 14:22:05,826 - INFO - Prediction time: 0.0042 seconds
+2025-12-07 14:22:05,826 - INFO - Prediction complete -> label=spam, confidence=0.9407501234022666
+2025-12-07 14:22:18,825 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-07 14:22:18,825 - INFO - Incoming /predict request
+2025-12-07 14:22:18,825 - INFO - Validation passed. Sending to prediction_service...
+2025-12-07 14:22:18,825 - INFO - Prediction pipeline started.
+2025-12-07 14:22:18,829 - INFO - Prediction complete: label=ham, confidence=0.9653334302130256
+2025-12-07 14:22:18,829 - INFO - Prediction time: 0.0041 seconds
+2025-12-07 14:22:18,829 - INFO - Prediction complete -> label=ham, confidence=0.9653334302130256
+2025-12-08 09:23:17,953 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-08 09:23:17,954 - INFO - Incoming /predict request
+2025-12-08 09:23:17,954 - INFO - Validation passed. Sending to prediction_service...
+2025-12-08 09:23:17,955 - INFO - Prediction pipeline started.
+2025-12-08 09:23:17,964 - INFO - Prediction complete: label=spam, confidence=0.8963225513799971
+2025-12-08 09:23:17,964 - INFO - Prediction time: 0.009 seconds
+2025-12-08 09:23:17,964 - INFO - Prediction complete -> label=spam, confidence=0.8963225513799971
+2025-12-08 09:24:22,597 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-08 09:24:22,597 - INFO - Incoming /predict request
+2025-12-08 09:24:22,597 - INFO - Validation passed. Sending to prediction_service...
+2025-12-08 09:24:22,597 - INFO - Prediction pipeline started.
+2025-12-08 09:24:22,601 - INFO - Prediction complete: label=ham, confidence=0.7875219991574195
+2025-12-08 09:24:22,602 - INFO - Prediction time: 0.0054 seconds
+2025-12-08 09:24:22,602 - INFO - Prediction complete -> label=ham, confidence=0.7875219991574195
+2025-12-08 09:29:23,489 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-08 09:29:23,489 - INFO - Incoming /predict request
+2025-12-08 09:29:23,490 - INFO - Validation passed. Sending to prediction_service...
+2025-12-08 09:29:23,490 - INFO - Prediction pipeline started.
+2025-12-08 09:29:23,498 - INFO - Prediction complete: label=ham, confidence=0.7875219991574195
+2025-12-08 09:29:23,498 - INFO - Prediction time: 0.0082 seconds
+2025-12-08 09:29:23,498 - INFO - Prediction complete -> label=ham, confidence=0.7875219991574195
+2025-12-08 09:29:57,566 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-08 09:29:57,567 - INFO - Incoming /predict request
+2025-12-08 09:29:57,567 - INFO - Validation passed. Sending to prediction_service...
+2025-12-08 09:29:57,568 - INFO - Prediction pipeline started.
+2025-12-08 09:29:57,575 - INFO - Prediction complete: label=spam, confidence=0.8963225513799971
+2025-12-08 09:29:57,575 - INFO - Prediction time: 0.007 seconds
+2025-12-08 09:29:57,576 - INFO - Prediction complete -> label=spam, confidence=0.8963225513799971
+2025-12-08 09:39:07,290 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-08 09:39:07,291 - INFO - Incoming /predict request
+2025-12-08 09:39:07,291 - INFO - Validation passed. Sending to prediction_service...
+2025-12-08 09:39:07,292 - INFO - Prediction pipeline started.
+2025-12-08 09:39:07,306 - INFO - Prediction complete: label=spam, confidence=0.8963225513799971
+2025-12-08 09:39:07,307 - INFO - Prediction time: 0.0149 seconds
+2025-12-08 09:39:07,309 - INFO - Prediction complete -> label=spam, confidence=0.8963225513799971
+2025-12-08 09:43:56,240 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-08 09:43:56,241 - INFO - Incoming /predict request
+2025-12-08 09:43:56,241 - INFO - Validation passed. Sending to prediction_service...
+2025-12-08 09:43:56,242 - INFO - Prediction pipeline started.
+2025-12-08 09:43:56,258 - INFO - Prediction complete: label=spam, confidence=0.9205745598246037
+2025-12-08 09:43:56,258 - INFO - Prediction time: 0.0155 seconds
+2025-12-08 09:43:56,259 - INFO - Prediction complete -> label=spam, confidence=0.9205745598246037
+2025-12-08 12:14:41,951 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-08 12:14:41,951 - INFO - Incoming /predict request
+2025-12-08 12:14:41,952 - INFO - Validation passed. Sending to prediction_service...
+2025-12-08 12:14:41,952 - INFO - Prediction pipeline started.
+2025-12-08 12:14:41,958 - INFO - Prediction complete: label=spam, confidence=0.9205745598246037
+2025-12-08 12:14:41,958 - INFO - Prediction time: 0.006 seconds
+2025-12-08 12:14:41,959 - INFO - Prediction complete -> label=spam, confidence=0.9205745598246037
+2025-12-09 11:31:22,547 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-09 11:31:22,548 - INFO - Incoming /predict request
+2025-12-09 11:31:22,548 - INFO - Validation passed. Sending to prediction_service...
+2025-12-09 11:31:22,548 - INFO - Prediction pipeline started.
+2025-12-09 11:31:22,555 - INFO - Prediction complete: label=ham, confidence=0.9670448826980563
+2025-12-09 11:31:22,555 - INFO - Prediction time: 0.007 seconds
+2025-12-09 11:31:22,555 - INFO - Prediction complete -> label=ham, confidence=0.9670448826980563
+2025-12-09 11:31:30,842 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-09 11:31:30,843 - INFO - Incoming /predict request
+2025-12-09 11:31:30,843 - INFO - Validation passed. Sending to prediction_service...
+2025-12-09 11:31:30,843 - INFO - Prediction pipeline started.
+2025-12-09 11:31:30,847 - INFO - Prediction complete: label=ham, confidence=0.9653334302130256
+2025-12-09 11:31:30,848 - INFO - Prediction time: 0.0049 seconds
+2025-12-09 11:31:30,848 - INFO - Prediction complete -> label=ham, confidence=0.9653334302130256
+2025-12-09 11:46:21,440 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-09 11:46:21,440 - INFO - Incoming /predict request
+2025-12-09 11:46:21,440 - INFO - Validation passed. Sending to prediction_service...
+2025-12-09 11:46:21,441 - INFO - Prediction pipeline started.
+2025-12-09 11:46:21,445 - INFO - Prediction complete: label=ham, confidence=0.9671766040010981
+2025-12-09 11:46:21,445 - INFO - Prediction time: 0.005 seconds
+2025-12-09 11:46:21,445 - INFO - Prediction complete -> label=ham, confidence=0.9671766040010981
+2025-12-09 11:46:51,624 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-09 11:46:51,624 - INFO - Incoming /predict request
+2025-12-09 11:46:51,624 - INFO - Validation passed. Sending to prediction_service...
+2025-12-09 11:46:51,624 - INFO - Prediction pipeline started.
+2025-12-09 11:46:51,637 - INFO - Prediction complete: label=spam, confidence=0.9807898259436698
+2025-12-09 11:46:51,637 - INFO - Prediction time: 0.0134 seconds
+2025-12-09 11:46:51,637 - INFO - Prediction complete -> label=spam, confidence=0.9807898259436698
+2025-12-09 11:49:17,271 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-09 11:49:17,271 - INFO - Incoming /predict request
+2025-12-09 11:49:17,272 - INFO - Validation passed. Sending to prediction_service...
+2025-12-09 11:49:17,273 - INFO - Prediction pipeline started.
+2025-12-09 11:49:17,276 - INFO - Prediction complete: label=ham, confidence=0.9673386002513921
+2025-12-09 11:49:17,276 - INFO - Prediction time: 0.0032 seconds
+2025-12-09 11:49:17,276 - INFO - Prediction complete -> label=ham, confidence=0.9673386002513921
+2025-12-09 11:49:50,401 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-09 11:49:50,402 - INFO - Incoming /predict request
+2025-12-09 11:49:50,402 - INFO - Validation passed. Sending to prediction_service...
+2025-12-09 11:49:50,402 - INFO - Prediction pipeline started.
+2025-12-09 11:49:50,403 - INFO - Prediction complete: label=ham, confidence=0.9673501887426114
+2025-12-09 11:49:50,404 - INFO - Prediction time: 0.0027 seconds
+2025-12-09 11:49:50,404 - INFO - Prediction complete -> label=ham, confidence=0.9673501887426114
+2025-12-09 11:55:56,302 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-09 11:55:56,302 - INFO - Incoming /predict request
+2025-12-09 11:55:56,303 - INFO - Validation passed. Sending to prediction_service...
+2025-12-09 11:55:56,303 - INFO - Prediction pipeline started.
+2025-12-09 11:55:56,305 - INFO - Prediction complete: label=ham, confidence=0.9653334302130256
+2025-12-09 11:55:56,305 - INFO - Prediction time: 0.002 seconds
+2025-12-09 11:55:56,305 - INFO - Prediction complete -> label=ham, confidence=0.9653334302130256
+2025-12-09 11:58:45,628 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-09 11:58:45,629 - INFO - Incoming /predict request
+2025-12-09 11:58:45,629 - INFO - Validation passed. Sending to prediction_service...
+2025-12-09 11:58:45,629 - INFO - Prediction pipeline started.
+2025-12-09 11:58:45,634 - INFO - Prediction complete: label=ham, confidence=0.9653334302130256
+2025-12-09 11:58:45,634 - INFO - Prediction time: 0.0042 seconds
+2025-12-09 11:58:45,635 - INFO - Prediction complete -> label=ham, confidence=0.9653334302130256
+2025-12-09 12:02:56,812 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-09 12:02:56,812 - INFO - Incoming /predict request
+2025-12-09 12:02:56,812 - INFO - Validation passed. Sending to prediction_service...
+2025-12-09 12:02:56,812 - INFO - Prediction pipeline started.
+2025-12-09 12:02:56,814 - INFO - Prediction complete: label=ham, confidence=0.9653334302130256
+2025-12-09 12:02:56,815 - INFO - Prediction time: 0.003 seconds
+2025-12-09 12:02:56,815 - INFO - Prediction complete -> label=ham, confidence=0.9653334302130256
+2025-12-09 12:27:56,697 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-09 12:27:56,697 - INFO - Incoming /predict request
+2025-12-09 12:27:56,697 - INFO - Validation passed. Sending to prediction_service...
+2025-12-09 12:27:56,697 - INFO - Prediction pipeline started.
+2025-12-09 12:27:56,705 - INFO - Prediction complete: label=ham, confidence=0.8743402767013251
+2025-12-09 12:27:56,705 - INFO - Prediction time: 0.008 seconds
+2025-12-09 12:27:56,705 - INFO - Prediction complete -> label=ham, confidence=0.8743402767013251
+2025-12-09 12:28:36,054 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-09 12:28:36,054 - INFO - Incoming /predict request
+2025-12-09 12:28:36,054 - INFO - Validation passed. Sending to prediction_service...
+2025-12-09 12:28:36,054 - INFO - Prediction pipeline started.
+2025-12-09 12:28:36,066 - INFO - Prediction complete: label=spam, confidence=0.980855637533413
+2025-12-09 12:28:36,067 - INFO - Prediction time: 0.013 seconds
+2025-12-09 12:28:36,067 - INFO - Prediction complete -> label=spam, confidence=0.980855637533413
+2025-12-09 17:10:09,665 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-09 17:10:09,665 - INFO - Incoming /predict request
+2025-12-09 17:10:09,666 - INFO - Validation passed. Sending to prediction_service...
+2025-12-09 17:10:09,666 - INFO - Prediction pipeline started.
+2025-12-09 17:10:09,687 - INFO - Prediction complete: label=spam, confidence=0.9818499084163822
+2025-12-09 17:10:09,687 - INFO - Prediction time: 0.0209 seconds
+2025-12-09 17:10:09,687 - INFO - Prediction complete -> label=spam, confidence=0.9818499084163822
+2025-12-11 00:44:31,174 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-11 00:44:31,174 - INFO - Incoming /predict request
+2025-12-11 00:44:31,175 - INFO - Validation passed. Sending to prediction_service...
+2025-12-11 00:44:31,175 - INFO - Prediction pipeline started.
+2025-12-11 00:44:31,183 - INFO - Prediction complete: label=spam, confidence=0.9815443262362554
+2025-12-11 00:44:31,183 - INFO - Prediction time: 0.008 seconds
+2025-12-11 00:44:31,183 - INFO - Prediction complete -> label=spam, confidence=0.9815443262362554
+2025-12-11 00:44:54,457 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-11 00:44:54,457 - INFO - Incoming /predict request
+2025-12-11 00:44:54,457 - INFO - Validation passed. Sending to prediction_service...
+2025-12-11 00:44:54,457 - INFO - Prediction pipeline started.
+2025-12-11 00:44:54,462 - INFO - Prediction complete: label=spam, confidence=0.9773715096153937
+2025-12-11 00:44:54,462 - INFO - Prediction time: 0.005 seconds
+2025-12-11 00:44:54,462 - INFO - Prediction complete -> label=spam, confidence=0.9773715096153937
+2025-12-11 00:45:09,146 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-11 00:45:09,146 - INFO - Incoming /predict request
+2025-12-11 00:45:09,147 - INFO - Validation passed. Sending to prediction_service...
+2025-12-11 00:45:09,147 - INFO - Prediction pipeline started.
+2025-12-11 00:45:09,151 - INFO - Prediction complete: label=spam, confidence=0.9291622580692894
+2025-12-11 00:45:09,151 - INFO - Prediction time: 0.004 seconds
+2025-12-11 00:45:09,151 - INFO - Prediction complete -> label=spam, confidence=0.9291622580692894
+2025-12-11 00:45:29,869 - INFO - Running predict_routes from: C:\Users\Universal\Desktop\CyberSentinal-AI\backend\routes\predict_routes.py
+2025-12-11 00:45:29,869 - INFO - Incoming /predict request
+2025-12-11 00:45:29,869 - INFO - Validation passed. Sending to prediction_service...
+2025-12-11 00:45:29,869 - INFO - Prediction pipeline started.
+2025-12-11 00:45:29,872 - INFO - Prediction complete: label=ham, confidence=0.5161399043279513
+2025-12-11 00:45:29,872 - INFO - Prediction time: 0.003 seconds
+2025-12-11 00:45:29,872 - INFO - Prediction complete -> label=ham, confidence=0.5161399043279513

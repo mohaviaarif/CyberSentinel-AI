@@ -4,169 +4,112 @@ import pandas as pd
 
 from utils.cleaner import sanitize_input, clean_text
 
-# --------- CONFIG ----------
 INPUT_PATH = "datasets/phishing_clean_balanced.csv"
 BACKUP_PATH = "datasets/phishing_clean_balanced_backup.csv"
-OUTPUT_PATH = "datasets/phishing_clean_balanced.csv"  # we overwrite with improved version
-NUM_DELIVERY_SPAM = 200
-# ---------------------------
+OUTPUT_PATH = "datasets/phishing_clean_balanced.csv"
+
+NUM_NEW_SPAM = 500  # you can change this
 
 
-def generate_delivery_phishing(carrier: str, link_domain: str):
-    """Generate synthetic delivery-scam phishing email."""
+def sanitize_row(text: str) -> str:
+    return clean_text(sanitize_input(text))
+
+
+# ---------- PHISHING TEMPLATES ----------
+
+def gen_bank_scam():
     templates = [
-        f"""
-Dear Customer,
-
-We attempted to deliver your package today but the delivery failed due to an outstanding fee.
-Your parcel is currently on hold at the {carrier} sorting facility.
-
-To reschedule delivery and release your package, please pay the small processing fee using the secure link below:
-
-https://{link_domain}/reschedule-delivery
-
-If you do not complete this payment within 24 hours, your shipment will be returned to the sender and additional charges may apply.
-
-Thank you,
-{carrier} Delivery Support
-""",
-        f"""
-Important: Action Required For Your {carrier} Shipment
-
-We were unable to complete your recent delivery because customs duties and handling charges have not been paid.
-
-Your package will be destroyed if you do not confirm payment:
-
-https://{link_domain}/confirm-fee
-
-This is your final notice. Failure to act today will result in permanent loss of your parcel.
-
-Sincerely,
-{carrier} Billing Department
-""",
-        f"""
-Package On Hold
-
-Your recent {carrier} shipment could not be delivered because the address appears incomplete or invalid.
-
-To avoid return-to-sender fees, please verify your delivery information and pay the address correction fee here:
-
-https://{link_domain}/update-address
-
-If you do not respond within 12 hours, your package will be returned and you may incur additional charges.
-
-Regards,
-{carrier} Customer Service
-""",
-        f"""
-Delivery Attempt Failed
-
-Our driver attempted to deliver your package but no one was available to receive it.
-
-To schedule a new delivery date and pay the re-delivery fee, please use the secure portal below:
-
-https://{link_domain}/schedule-new-delivery
-
-Your parcel will be stored only for a limited time before being returned.
-
-{carrier} Delivery Team
-""",
-        f"""
-Customs Clearance Required
-
-Your international package handled by {carrier} is being held by customs due to unpaid import fees.
-
-To release your shipment and avoid penalties, complete the payment via the secure link:
-
-https://{link_domain}/customs-clearance
-
-If you ignore this notice, additional storage and legal fees may be applied to your account.
-
-Thank you,
-{carrier} Customs Processing Center
-"""
+        "Your bank account has been temporarily locked due to suspicious activity. Log in to verify your identity: https://secure-bank-verify.com",
+        "We were unable to process your recent transaction. Please confirm your card details to avoid account suspension.",
+        "Unusual debit alert: Your card was used for a purchase. If this wasn't you, verify immediately: https://card-security-check.com"
     ]
+    return random.choice(templates)
 
-    body = random.choice(templates)
-    return body.strip()
+
+def gen_hr_job_scam():
+    templates = [
+        "Congratulations! You have been shortlisted for a remote job with a salary of $5,000. Fill in your details and pay the processing fee to confirm.",
+        "Your resume has been selected for an urgent overseas position. Complete the attached form and pay registration charges.",
+    ]
+    return random.choice(templates)
+
+
+def gen_marketplace_scam():
+    templates = [
+        "OLX: Buyer has sent you the payment. Click here to receive funds in your account: http://olx-secure-payments.com",
+        "Your Daraz order requires additional verification. Pay the remaining clearance fee to avoid cancellation: http://daraz-clearance-update.com"
+    ]
+    return random.choice(templates)
+
+
+def gen_security_alert_scam():
+    templates = [
+        "Your two-factor authentication has been disabled. Re-enable security now: https://account-security-reset.com",
+        "We detected a login from a new device. If this was not you, secure your account immediately: https://unusual-login-protect.com"
+    ]
+    return random.choice(templates)
+
+
+def gen_govt_scam():
+    templates = [
+        "PTA: Your SIM card will be blocked in 24 hours. Re-verify ownership here: http://pta-sim-verify.com",
+        "NADRA: Your biometric verification failed. Update details to avoid CNIC suspension: http://nadra-update-portal.com",
+        "FBR: Your tax refund is ready. Confirm CNIC and bank details here: http://fbr-tax-refund-check.com"
+    ]
+    return random.choice(templates)
+
+
+def gen_crypto_scam():
+    templates = [
+        "Limited time offer! Double your Bitcoin in 24 hours. Send BTC to the address below and watch your balance grow.",
+        "Your Binance account will be disabled due to inactivity. Log in and confirm your wallet phrase to restore access."
+    ]
+    return random.choice(templates)
+
+
+ALL_GENERATORS = [
+    gen_bank_scam,
+    gen_hr_job_scam,
+    gen_marketplace_scam,
+    gen_security_alert_scam,
+    gen_govt_scam,
+    gen_crypto_scam
+]
 
 
 def main():
     if not os.path.exists(INPUT_PATH):
-        raise FileNotFoundError(f"Input dataset not found at: {INPUT_PATH}")
+        raise FileNotFoundError("Dataset not found.")
 
-    print(f"Loading existing balanced dataset from: {INPUT_PATH}")
     df = pd.read_csv(INPUT_PATH)
 
-    print("\nCurrent label counts:")
-    print(df["label"].value_counts())
-
-    # Backup original file
     if not os.path.exists(BACKUP_PATH):
-        print(f"\nCreating backup at: {BACKUP_PATH}")
         df.to_csv(BACKUP_PATH, index=False, encoding="utf-8")
+        print("Backup created at:", BACKUP_PATH)
     else:
-        print(f"\nBackup already exists at: {BACKUP_PATH}")
-
-    carriers = [
-        "DHL", "FedEx", "UPS", "TCS", "Leopards Courier",
-        "USPS", "Royal Mail", "DPD", "Hermes", "Canada Post"
-    ]
-
-    link_domains = [
-        "dhl-delivery-update.com",
-        "dhl-pay-fee-delivery.com",
-        "fedex-reschedule-center.com",
-        "ups-parcel-clearance.com",
-        "courier-fee-payment.com",
-        "secure-shipment-update.com",
-        "global-delivery-confirm.com",
-        "track-your-parcel-today.com"
-    ]
+        print("Backup already exists at:", BACKUP_PATH)
 
     synthetic_rows = []
 
-    print(f"\nGenerating {NUM_DELIVERY_SPAM} delivery phishing emails...")
-
-    for i in range(NUM_DELIVERY_SPAM):
-        carrier = random.choice(carriers)
-        link_domain = random.choice(link_domains)
-
-        raw_email = generate_delivery_phishing(carrier, link_domain)
-
-        # Use your existing security + cleaning pipeline
-        sanitized = sanitize_input(raw_email)
-        cleaned = clean_text(sanitized)
-
+    for _ in range(NUM_NEW_SPAM):
+        gen = random.choice(ALL_GENERATORS)
+        raw = gen()
         synthetic_rows.append({
             "label": "spam",
-            "email_text": raw_email,
-            "email_text_clean": cleaned
+            "email_text": raw,
+            "email_text_clean": sanitize_row(raw)
         })
 
     synthetic_df = pd.DataFrame(synthetic_rows)
 
-    print("\nNew synthetic phishing label counts:")
-    print(synthetic_df["label"].value_counts())
+    combined = pd.concat([df, synthetic_df], ignore_index=True)
+    combined = combined.sample(frac=1, random_state=42).reset_index(drop=True)
 
-    # Merge with existing dataset
-    combined_df = pd.concat([df, synthetic_df], ignore_index=True)
+    combined.to_csv(OUTPUT_PATH, index=False, encoding="utf-8")
 
-    print("\nUpdated combined label counts:")
-    print(combined_df["label"].value_counts())
-
-    # Shuffle rows for randomness
-    combined_df = combined_df.sample(frac=1, random_state=42).reset_index(drop=True)
-
-    # Ensure directory exists
-    os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)
-
-    # Overwrite main balanced dataset
-    combined_df.to_csv(OUTPUT_PATH, index=False, encoding="utf-8")
-    print(f"\n✅ Updated balanced dataset (with delivery scams) saved to: {OUTPUT_PATH}")
-    print(f"   Original dataset backup kept at: {BACKUP_PATH}")
+    print(f"\n✅ Added {NUM_NEW_SPAM} advanced phishing samples.")
+    print(combined["label"].value_counts())
 
 
 if __name__ == "__main__":
     main()
-
