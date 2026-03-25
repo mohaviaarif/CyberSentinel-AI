@@ -11,16 +11,33 @@ logger = logging.getLogger("cybersentinel")
 
 
 # --------------------------------------------------------
-# LOAD MODEL + BOTH VECTORIZERS (WORD + CHAR)
+# GET ABSOLUTE BASE PATH (IMPORTANT FIX)
+# --------------------------------------------------------
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+MODEL_DIR = os.path.join(BASE_DIR, "models")
+
+
+# --------------------------------------------------------
+# LOAD MODEL + VECTORIZERS
 # --------------------------------------------------------
 def load_model():
     try:
-        base_path = os.path.join("backend", "models")
+        word_vec_path = os.path.join(MODEL_DIR, "tfidf_word_vectorizer.pkl")
+        char_vec_path = os.path.join(MODEL_DIR, "tfidf_char_vectorizer.pkl")
+        model_path = os.path.join(MODEL_DIR, "best_model.pkl")
 
-        word_vec_path = os.path.join(base_path, "tfidf_word_vectorizer.pkl")
-        char_vec_path = os.path.join(base_path, "tfidf_char_vectorizer.pkl")
-        model_path = os.path.join(base_path, "best_model.pkl")  # Logistic Regression model
+        # Check files exist
+        if not os.path.exists(word_vec_path):
+            raise FileNotFoundError(f"Missing: {word_vec_path}")
 
+        if not os.path.exists(char_vec_path):
+            raise FileNotFoundError(f"Missing: {char_vec_path}")
+
+        if not os.path.exists(model_path):
+            raise FileNotFoundError(f"Missing: {model_path}")
+
+        # Load models
         word_vectorizer = joblib.load(word_vec_path)
         char_vectorizer = joblib.load(char_vec_path)
         model = joblib.load(model_path)
@@ -33,6 +50,7 @@ def load_model():
         raise e
 
 
+# Load once (global)
 word_vectorizer, char_vectorizer, model = load_model()
 
 
@@ -42,6 +60,9 @@ word_vectorizer, char_vectorizer, model = load_model()
 def predict_email(raw_text):
     try:
         logger.info("Prediction pipeline started.")
+
+        if not raw_text or not isinstance(raw_text, str):
+            raise ValueError("Invalid input text.")
 
         # 1. SANITIZE INPUT
         safe_text = sanitize_input(raw_text)
@@ -57,22 +78,25 @@ def predict_email(raw_text):
         # 4. PREDICT LABEL
         prediction = model.predict(combined_vec)[0]
 
-        # 5. RAW LR PROBABILITIES
+        # 5. PROBABILITY
         proba = model.predict_proba(combined_vec)[0]
         spam_index = list(model.classes_).index("spam")
         spam_proba = float(proba[spam_index])
 
         # ------------------------------------------------
-        # CONFIDENCE CALIBRATION
+        # CONFIDENCE CALIBRATION (SIGMOID SMOOTHING)
         # ------------------------------------------------
         calibrated_conf = float(
             1 / (1 + np.exp(-(spam_proba - 0.5) * 8))
         )
 
-        final_confidence = calibrated_conf if prediction == "spam" else (1 - calibrated_conf)
+        final_confidence = (
+            calibrated_conf if prediction == "spam"
+            else (1 - calibrated_conf)
+        )
 
         # ------------------------------------------------
-        # EXPLANATION ENGINE (threats + safety tips)
+        # EXPLANATION ENGINE
         # ------------------------------------------------
         threats, tips = build_explanation(
             raw_text=raw_text,
@@ -80,11 +104,13 @@ def predict_email(raw_text):
             confidence=final_confidence
         )
 
-        logger.info(f"Prediction complete: label={prediction}, confidence={final_confidence}")
+        logger.info(
+            f"Prediction complete | label={prediction} | confidence={final_confidence:.4f}"
+        )
 
         return {
             "prediction": prediction,
-            "confidence": final_confidence,
+            "confidence": round(final_confidence, 4),
             "threats": threats,
             "tips": tips
         }

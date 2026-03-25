@@ -1,6 +1,25 @@
 # Python virtual environment
 cyberenv/
+
+# Python cache
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
+
+# Environment variables
+.env
+
+# Database
+users.db
+*.db
+
+# ML models
+*.pkl
+
+# Logs
+*.log
+
+# Node modules (frontend)
+node_modules/
+backend/logs/
