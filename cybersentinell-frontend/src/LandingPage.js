@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import PageTransition from "./animations/PageTransition";
 import {
@@ -38,7 +39,7 @@ export function LandingPage() {
         current = target;
         clearInterval(interval);
       }
-      setter(Math.floor(current));
+      setter(parseFloat(current.toFixed(1)));
     }, speed);
   };
 
@@ -78,7 +79,7 @@ export function LandingPage() {
   useEffect(() => {
     if (animateStats) {
       animateNumber(847, setThreats);
-      animateNumber(98.4, setAccuracy, 15);
+       setAccuracy(98.7);
     }
   }, [animateStats]);
 
@@ -117,20 +118,14 @@ export function LandingPage() {
           <div className="hero-content-pro">
             <FadeIn delay={0.2}>
               <h1 className="hero-title-pro dashboard-logo">
-                <FaShieldAlt
-                  style={{
-                    marginRight: "8px",
-                    filter: "drop-shadow(0 0 4px #00eaff)",
-                  }}
-                />
+                <FaShieldAlt style={{ marginRight: "8px" }} />
                 Dashboard
               </h1>
             </FadeIn>
 
             <FadeIn delay={0.35}>
               <p className="hero-sub-pro dashboard-sub">
-                Real-time AI Threat Detection • Autonomous Defense • Live
-                Security Console
+                Real-time AI Threat Detection • Autonomous Defense • Live Security Console
               </p>
             </FadeIn>
 
@@ -146,14 +141,13 @@ export function LandingPage() {
                 {[
                   ["Total Emails Analyzed", emailCount, <FaInbox />],
                   ["Detected Threats (24h)", threats, <FaBug />],
-                  ["Model Accuracy", accuracy.toFixed(1) + "%", <FaBrain />],
+                  ["Model Accuracy", accuracy ? accuracy.toFixed(1) + "%" : "0%", <FaBrain />],
+                  ["Precision", "95%", <FaBrain />],
+                  ["Recall", "95%", <FaBrain />],
                   ["Avg Analysis Speed", "0.42 sec", <FaBolt />],
                 ].map(([label, value, icon], i) => (
                   <StaggerItem key={i}>
-                    <div
-                      className="dash-stat-card enhanced-card clickable-card"
-                      onClick={goToAnalyzer}
-                    >
+                    <div className="dash-stat-card enhanced-card clickable-card">
                       <div className="dash-stat-icon">{icon}</div>
                       <div className="dash-stat-value">{value}</div>
                       <div className="dash-stat-label">{label}</div>
@@ -245,10 +239,7 @@ export function LandingPage() {
         </FadeIn>
 
         <footer className="landing-footer-pro">
-          <p style={{ margin: 0 }}>
-            © {new Date().getFullYear()} Cyber Sentinel — Threat Intelligence
-            Dashboard
-          </p>
+          <p>© {new Date().getFullYear()} Cyber Sentinel</p>
         </footer>
       </div>
     </PageTransition>
@@ -256,3 +247,6 @@ export function LandingPage() {
 }
 
 export default LandingPage;
+
+
+
