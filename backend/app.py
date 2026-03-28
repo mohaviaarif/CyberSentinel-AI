@@ -1,10 +1,13 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from routes.predict_routes import predict_bp
+from dotenv import load_dotenv
 import logging
 import os
 import sqlite3
 import hashlib
+
+load_dotenv()
 
 # Security
 from security.limiter import limiter   # <-- you already had this
@@ -39,13 +42,21 @@ os.makedirs("backend/logs", exist_ok=True)
 logger = logging.getLogger("cybersentinel")
 logger.setLevel(logging.INFO)
 
+# File handler
 file_handler = logging.FileHandler("backend/logs/app.log")
 file_handler.setLevel(logging.INFO)
 
+# Console handler (IMPORTANT)
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.INFO)
+
 formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
 file_handler.setFormatter(formatter)
+console_handler.setFormatter(formatter)
 
 logger.addHandler(file_handler)
+logger.addHandler(console_handler)
+
 app.logger = logger
 
 
@@ -75,10 +86,18 @@ def init_db():
             password_hash TEXT NOT NULL
         )
     """)
-    conn.commit()
+    conn.commit(
+        
+    )
     conn.close()
 
 init_db()
+# Verify API keys are loaded at startup
+vt_key = os.getenv("VIRUSTOTAL_API_KEY")
+pt_key = os.getenv("PHISHTANK_API_KEY")
+ai_key = os.getenv("ABUSEIPDB_API_KEY")
+
+logger.info(f"API Keys loaded: VT={'YES' if vt_key else 'NO'}, PT={'YES' if pt_key else 'NO'}, AI={'YES' if ai_key else 'NO'}")
 
 def hash_password(pw):
     return hashlib.sha256(pw.encode("utf-8")).hexdigest()
