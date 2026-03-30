@@ -33,8 +33,7 @@ CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 # ---------------------------------
 # Ensure logs folder exists
 # ---------------------------------
-os.makedirs("backend/logs", exist_ok=True)
-
+os.makedirs("logs", exist_ok=True)
 
 # ---------------------------------
 # Custom Logger
@@ -43,7 +42,8 @@ logger = logging.getLogger("cybersentinel")
 logger.setLevel(logging.INFO)
 
 # File handler
-file_handler = logging.FileHandler("backend/logs/app.log")
+log_path = os.path.join(os.getcwd(), "logs", "app.log")
+file_handler = logging.FileHandler(log_path)
 file_handler.setLevel(logging.INFO)
 
 # Console handler (IMPORTANT)
