@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from routes.predict_routes import predict_bp
+from routes.url_routes import url_bp
 from dotenv import load_dotenv
 import logging
 import os
@@ -161,6 +162,7 @@ def login():
 # Register Prediction Blueprint
 # ---------------------------------
 app.register_blueprint(predict_bp)
+app.register_blueprint(url_bp)
 
 
 
