@@ -142,17 +142,26 @@ def analyze_single_url(url: str) -> dict:
 
         # FEATURE 5: Keywords
         SUSPICIOUS_KEYWORDS = [
+            # Generic phishing
             "login", "verify", "account", "update", "secure",
             "free", "bank", "paypal", "confirm", "password",
             "suspended", "click", "signin", "validate", "authorize",
-            "jazzcash", "easypaisa", "hbl", "ubl"
+            "winner", "prize", "claim", "urgent", "expire",
+
+            # Pakistani specific
+            "jazzcash", "easypaisa", "hbl", "ubl", "meezan",
+            "nadra", "pta", "fbr", "bisp", "ehsaas"
         ]
 
-        found_keywords = [kw for kw in SUSPICIOUS_KEYWORDS if kw in url.lower()]
+        url_lower = url.lower()
+
+        found_keywords = [kw for kw in SUSPICIOUS_KEYWORDS if kw in url_lower]
+
         features["has_suspicious_keywords"] = len(found_keywords) > 0
+
         if features["has_suspicious_keywords"]:
             score += 2
-            threat_indicators.append(f"Suspicious keywords: {', '.join(found_keywords[:3])}")
+            threat_indicators.append(f"Suspicious keywords: {', '.join(found_keywords)}")
 
         # FEATURE 6: Hyphens
         features["has_hyphens_in_domain"] = "-" in domain
