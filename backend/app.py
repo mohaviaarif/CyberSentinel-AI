@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from routes.predict_routes import predict_bp
 from routes.url_routes import url_bp
+from routes.malware_routes import malware_bp
 from dotenv import load_dotenv
 import logging
 import os
@@ -11,7 +12,7 @@ import hashlib
 load_dotenv()
 
 # Security
-from security.limiter import limiter   # <-- you already had this
+from security.limiter import limiter
 
 
 # ---------------------------------
@@ -20,9 +21,9 @@ from security.limiter import limiter   # <-- you already had this
 app = Flask(__name__)
 
 # ---------------------------------
-# STEP 2: Max Payload Limit (1MB)
+# STEP 2: Max Payload Limit (UPDATED TO 32MB)
 # ---------------------------------
-app.config["MAX_CONTENT_LENGTH"] = 1 * 1024 * 1024  # 1 MB
+app.config["MAX_CONTENT_LENGTH"] = 32 * 1024 * 1024  # 32 MB
 
 
 # ---------------------------------
@@ -42,12 +43,10 @@ os.makedirs("logs", exist_ok=True)
 logger = logging.getLogger("cybersentinel")
 logger.setLevel(logging.INFO)
 
-# File handler
 log_path = os.path.join(os.getcwd(), "logs", "app.log")
 file_handler = logging.FileHandler(log_path)
 file_handler.setLevel(logging.INFO)
 
-# Console handler (IMPORTANT)
 console_handler = logging.StreamHandler()
 console_handler.setLevel(logging.INFO)
 
@@ -67,12 +66,10 @@ app.logger = logger
 limiter.init_app(app)
 
 
-
 # ============================================================
 # 🔐 AUTHENTICATION SYSTEM (Signup + Login)
 # ============================================================
 
-# ---------- Database Helper ----------
 def get_db():
     conn = sqlite3.connect("users.db")
     conn.row_factory = sqlite3.Row
@@ -87,13 +84,11 @@ def init_db():
             password_hash TEXT NOT NULL
         )
     """)
-    conn.commit(
-        
-    )
+    conn.commit()
     conn.close()
 
 init_db()
-# Verify API keys are loaded at startup
+
 vt_key = os.getenv("VIRUSTOTAL_API_KEY")
 pt_key = os.getenv("PHISHTANK_API_KEY")
 ai_key = os.getenv("ABUSEIPDB_API_KEY")
@@ -104,7 +99,6 @@ def hash_password(pw):
     return hashlib.sha256(pw.encode("utf-8")).hexdigest()
 
 
-# ---------- SIGNUP ----------
 @app.route("/auth/signup", methods=["POST"])
 def signup():
     data = request.get_json()
@@ -129,7 +123,6 @@ def signup():
         return jsonify({"success": False, "error": "User already exists."}), 400
 
 
-# ---------- LOGIN ----------
 @app.route("/auth/login", methods=["POST"])
 def login():
     data = request.get_json()
@@ -144,7 +137,6 @@ def login():
     if not user or user["password_hash"] != hash_password(password):
         return jsonify({"success": False, "error": "Invalid email or password."}), 401
 
-    # Fake token for FYP
     return jsonify({
         "success": True,
         "message": "Login successful!",
@@ -152,18 +144,13 @@ def login():
         "email": email
     })
 
-# ============================================================
-# END AUTH
-# ============================================================
-
-
 
 # ---------------------------------
-# Register Prediction Blueprint
+# Register Blueprints
 # ---------------------------------
 app.register_blueprint(predict_bp)
 app.register_blueprint(url_bp)
-
+app.register_blueprint(malware_bp)
 
 
 # ---------------------------------
@@ -175,58 +162,41 @@ def home():
     return {"message": "⚡ CyberSentinel-AI API is running securely!"}
 
 
-
 # ---------------------------------
 # GLOBAL ERROR HANDLERS
 # ---------------------------------
-
 @app.errorhandler(404)
 def not_found(error):
     app.logger.warning("404 - Route not found")
-    return jsonify({
-        "success": False,
-        "error": "Route not found."
-    }), 404
+    return jsonify({"success": False, "error": "Route not found."}), 404
 
 
 @app.errorhandler(405)
 def method_not_allowed(error):
     app.logger.warning("405 - Method not allowed")
-    return jsonify({
-        "success": False,
-        "error": "Method not allowed."
-    }), 405
+    return jsonify({"success": False, "error": "Method not allowed."}), 405
 
 
 @app.errorhandler(413)
 def too_large(error):
     app.logger.warning("413 - Payload too large")
-    return jsonify({
-        "success": False,
-        "error": "Payload too large (max 1MB)."
-    }), 413
+    return jsonify({"success": False, "error": "Payload too large (max 32MB)."}), 413
 
 
 @app.errorhandler(429)
 def rate_limit_handler(error):
     app.logger.warning("429 - Rate limit exceeded")
-    return jsonify({
-        "success": False,
-        "error": "Rate limit exceeded. Try again later."
-    }), 429
+    return jsonify({"success": False, "error": "Rate limit exceeded. Try again later."}), 429
 
 
 @app.errorhandler(500)
 def internal_error(error):
     app.logger.error("500 - Internal server error")
-    return jsonify({
-        "success": False,
-        "error": "Something went wrong on the server."
-    }), 500
+    return jsonify({"success": False, "error": "Something went wrong on the server."}), 500
 
 
 # ---------------------------------
-# STEP 3: Run App (Debug OFF)
+# Run App
 # ---------------------------------
 if __name__ == "__main__":
     app.run(debug=False, port=5000)

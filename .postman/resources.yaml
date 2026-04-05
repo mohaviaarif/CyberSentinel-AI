@@ -1,0 +1,9 @@
+# Use this workspace to collaborate
+workspace:
+  id: 9b1f8d24-e9eb-49ed-8ef0-5458241f53e8
+
+localResources:
+  specs:
+    - ..\cyberenv\Lib\site-packages\jupyterlab_server\rest-api.yml
+    - ..\cyberenv\Lib\site-packages\jupyter_server_terminals\rest-api.yml
+    - ..\cyberenv\Lib\site-packages\jupyter_server\services\api\api.yaml
