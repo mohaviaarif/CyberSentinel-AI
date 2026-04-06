@@ -1,0 +1,19 @@
+              precision    recall  f1-score   support
+
+         ham       0.99      0.99      0.99       893
+        spam       0.95      0.95      0.95       131
+
+    accuracy                           0.99      1024
+   macro avg       0.97      0.97      0.97      1024
+weighted avg       0.99      0.99      0.99      1024
+
+Accuracy: 98.73%
+Precision (spam): 95%
+Recall (spam): 95%
+F1-score (spam): 95%
+
+Confusion Matrix:
+TP = 125
+TN = 886
+FP = 7
+FN = 6

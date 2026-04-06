@@ -24,22 +24,23 @@ def predict():
         current_app.logger.warning("Request failed: malformed JSON")
         return jsonify({"success": False, "error": "Invalid JSON format."}), 400
 
-    if "email_text" not in data:
-        current_app.logger.warning("Request failed: missing 'email_text'")
-        return jsonify({"success": False, "error": "'email_text' field is missing."}), 400
+    # ✅ FIXED INPUT FIELD
+    if "text" not in data:
+        current_app.logger.warning("Request failed: missing 'text'")
+        return jsonify({"success": False, "error": "'text' field is missing."}), 400
 
-    text = data["email_text"]
+    text = data["text"]
 
     if not isinstance(text, str):
-        current_app.logger.warning("Request failed: 'email_text' is not string")
+        current_app.logger.warning("Request failed: 'text' is not string")
         return jsonify({"success": False, "error": "Email text must be a string."}), 400
 
     if not text.strip():
-        current_app.logger.warning("Request failed: 'email_text' is empty")
+        current_app.logger.warning("Request failed: 'text' is empty")
         return jsonify({"success": False, "error": "Email text cannot be empty."}), 400
 
     if len(text) > 5000:
-        current_app.logger.warning("Request failed: 'email_text' too long")
+        current_app.logger.warning("Request failed: 'text' too long")
         return jsonify({"success": False, "error": "Email text is too long (max 5000 chars)."}), 400
 
     current_app.logger.info("Validation passed. Sending to prediction_service...")
@@ -63,15 +64,12 @@ def predict():
             f"Prediction complete -> label={label}, confidence={confidence}"
         )
 
+        # ✅ FIXED RESPONSE FORMAT (MATCHES TEST SCRIPT)
         return jsonify({
-            "success": True,
-            "result": {
-                "label": label,
-                "confidence": confidence,
-                "threats": threats,
-                "tips": tips,
-                "response_time": prediction_time
-            }
+            "prediction": label,
+            "confidence": confidence,
+            "threats": threats,
+            "tips": tips
         }), 200
 
     except Exception as e:
@@ -82,15 +80,10 @@ def predict():
         }), 500
 
 
-# ✅ CORRECT POSITION (OUTSIDE predict function)
+# ✅ KEEP THIS PART (NO CHANGES)
 @predict_bp.route("/api/phish-file", methods=["POST"])
 @limiter.limit("10 per minute")
 def scan_email_file():
-    """
-    POST /api/phish-file
-    Accepts .txt or .eml file upload.
-    Reads text content and runs through phishing detection.
-    """
 
     try:
         if "file" not in request.files:
