@@ -29,26 +29,23 @@ class URLAnalyzer:
 
         url = url.strip()
 
-        # ✅ Track if scheme was auto-added
         scheme_added = False
 
-        # Add scheme if missing so urlparse works correctly
         if not url.startswith("http://") and not url.startswith("https://"):
             url = "http://" + url
             scheme_added = True
+    
 
-        # Basic format check
         if "." not in url:
             return self._error_response("Invalid URL format — must contain a domain")
 
         # ── STEP 2: Rule-based scoring ────────────────
         local_result = analyze_single_url(url)
 
-        score = local_result["score"]
-        threat_indicators = local_result["threat_indicators"].copy()
-        features = local_result["features"]
+        score = local_result.get("score", 0)
+        threat_indicators = local_result.get("threat_indicators", []).copy()
+        features = local_result.get("features", {})
 
-        # ✅ FINAL FIX (corrected properly)
         if scheme_added and features.get("is_http_not_https"):
             features["is_http_not_https"] = False
             score = max(0, score - 1)
@@ -108,7 +105,28 @@ class URLAnalyzer:
         if risk_level == "safe" and len(threat_indicators) == 1:
             threat_indicators = ["No major threat indicators detected in this URL"]
 
+        # 🔥 NEW: GENERATE AI REASONING (ONLY CHANGE)
+        reasoning_parts = []
+
+        if features.get("is_http_not_https"):
+            reasoning_parts.append("use of HTTP instead of HTTPS")
+
+        if features.get("has_hyphens_in_domain"):
+            reasoning_parts.append("use of hyphens in domain")
+
+        if features.get("has_suspicious_keywords"):
+            reasoning_parts.append("presence of suspicious keywords")
+
+        if features.get("has_ip_address"):
+            reasoning_parts.append("use of raw IP address instead of domain")
+
+        if not reasoning_parts:
+            reasoning = "No harmful indicators detected."
+        else:
+            reasoning = "This URL shows signs of risk such as " + ", ".join(reasoning_parts) + "."
+
         return {
+            "success": True,
             "result": risk_level,
             "confidence": round(confidence, 4),
             "score": score,
@@ -116,9 +134,8 @@ class URLAnalyzer:
             "tips": tips,
             "abuseipdb_checked": abuseipdb_checked,
             "abuseipdb_score": abuseipdb_score,
-            "features": features
+             "features": features
         }
-
     def _extract_domain(self, url: str) -> str:
         try:
             from urllib.parse import urlparse

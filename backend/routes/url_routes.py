@@ -46,26 +46,15 @@ def scan_url():
         # ── Run analysis ──────────────────────────────
         result = analyzer.analyze(url)
 
-        # ── Log the result ────────────────────────────
+        # ✅ FIX: correct logging (INSIDE try + flat structure)
         current_app.logger.info(
-            f"URL scan complete: {result['result']} | "
-            f"score={result['score']} | "
-            f"confidence={result['confidence']}"
+            f"URL scan complete: {result.get('result')} | "
+            f"score={result.get('score')} | "
+            f"confidence={result.get('confidence')}"
         )
 
-        # ── Return response ───────────────────────────
-        return jsonify({
-            "success": True,
-            "url": url,
-            "result": result["result"],
-            "confidence": result["confidence"],
-            "score": result["score"],
-            "threat_indicators": result["threat_indicators"],
-            "tips": result["tips"],
-            "abuseipdb_checked": result["abuseipdb_checked"],
-            "abuseipdb_score": result["abuseipdb_score"],
-            "features": result["features"]
-        }), 200
+        # ✅ FIX: directly return result (NO inner, NO remapping)
+        return jsonify(result), 200
 
     except Exception as e:
         current_app.logger.error(f"URL scan error: {str(e)}")

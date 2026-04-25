@@ -71,24 +71,18 @@ def analyze_urls(text: str):
 
 
 def analyze_single_url(url: str) -> dict:
-    """
-    Analyzes a single URL entered by the user.
-    Returns threat score, risk level, confidence, and explanation.
-    """
-
-    # Input validation
     if not url or not isinstance(url, str):
         return {
             "score": 0,
             "risk_level": "error",
             "confidence": 0.0,
             "threat_indicators": ["No URL provided"],
-            "features": {}
+            "features": {},
+            "reasoning": "No URL provided."
         }
 
     url = url.strip()
 
-    # Ensure URL has scheme (fix for inputs like "google.com")
     if not url.startswith(("http://", "https://")):
         url = "http://" + url
 
@@ -103,93 +97,78 @@ def analyze_single_url(url: str) -> dict:
         path = parsed.path.lower()
         scheme = parsed.scheme.lower()
 
-        # Detect invalid URL (no domain)
         if not host:
             return {
                 "score": 0,
                 "risk_level": "error",
                 "confidence": 0.0,
                 "threat_indicators": ["Invalid URL format"],
-                "features": {}
+                "features": {},
+                "reasoning": "Invalid URL format."
             }
 
         domain = host.replace("www.", "")
 
-        # FEATURE 1: URL length
         features["url_length_over_75"] = len(url) > 75
         if features["url_length_over_75"]:
             score += 1
             threat_indicators.append(f"URL is unusually long ({len(url)} characters)")
 
-        # FEATURE 2: IP address
         is_ip = bool(re.match(r"^\d{1,3}(\.\d{1,3}){3}$", host))
         features["has_ip_address"] = is_ip
         if is_ip:
             score += 2
             threat_indicators.append("Domain is an IP address")
 
-        # FEATURE 3: @ symbol
         features["has_at_symbol"] = "@" in url
         if features["has_at_symbol"]:
             score += 2
             threat_indicators.append("URL contains @ symbol")
 
-        # FEATURE 4: HTTP
         features["is_http_not_https"] = scheme == "http"
         if features["is_http_not_https"]:
             score += 1
             threat_indicators.append("URL uses HTTP not HTTPS")
 
-        # FEATURE 5: Keywords
         SUSPICIOUS_KEYWORDS = [
-            # Generic phishing
             "login", "verify", "account", "update", "secure",
             "free", "bank", "paypal", "confirm", "password",
             "suspended", "click", "signin", "validate", "authorize",
             "winner", "prize", "claim", "urgent", "expire",
-
-            # Pakistani specific
             "jazzcash", "easypaisa", "hbl", "ubl", "meezan",
             "nadra", "pta", "fbr", "bisp", "ehsaas"
         ]
 
         url_lower = url.lower()
-
         found_keywords = [kw for kw in SUSPICIOUS_KEYWORDS if kw in url_lower]
 
         features["has_suspicious_keywords"] = len(found_keywords) > 0
-
         if features["has_suspicious_keywords"]:
             score += 2
             threat_indicators.append(f"Suspicious keywords: {', '.join(found_keywords)}")
 
-        # FEATURE 6: Hyphens
         features["has_hyphens_in_domain"] = "-" in domain
         if features["has_hyphens_in_domain"]:
             score += 1
             threat_indicators.append("Hyphens in domain")
 
-        # FEATURE 7: Shortener (exact match)
         features["is_url_shortener"] = host in SHORTENERS
         if features["is_url_shortener"]:
             score += 1
             threat_indicators.append("URL shortener detected")
 
-        # FEATURE 8: Subdomains
         subdomain_count = max(0, len(domain.split(".")) - 2)
         features["num_subdomains_over_3"] = subdomain_count > 3
         if features["num_subdomains_over_3"]:
             score += 1
             threat_indicators.append(f"Too many subdomains ({subdomain_count})")
 
-        # FEATURE 9: Suspicious TLD
         tld = domain.split(".")[-1] if "." in domain else ""
         features["has_suspicious_tld"] = tld in SUSPICIOUS_TLDS
         if features["has_suspicious_tld"]:
             score += 1
             threat_indicators.append(f"Suspicious TLD: .{tld}")
 
-        # FEATURE 10: Long path
         features["has_long_path"] = len(path) > 20
         if features["has_long_path"]:
             score += 1
@@ -201,22 +180,26 @@ def analyze_single_url(url: str) -> dict:
             "risk_level": "error",
             "confidence": 0.0,
             "threat_indicators": [f"Error analyzing URL: {str(e)}"],
-            "features": {}
+            "features": {},
+            "reasoning": "Error analyzing URL."
         }
+
+    # 🔥 AI REASONING (ONLY ADDED PART)
+    if threat_indicators:
+        reasoning = "This URL is flagged because: " + "; ".join(threat_indicators) + "."
+    else:
+        reasoning = "No harmful indicators detected."
 
     # RISK CALCULATION
     if score >= 4:
         risk_level = "malicious"
         confidence = min(0.95, 0.6 + (score * 0.05))
-
     elif score >= 2:
         risk_level = "suspicious"
         confidence = min(0.75, 0.4 + (score * 0.05))
-
     elif score == 1:
         risk_level = "suspicious"
         confidence = 0.5
-
     else:
         risk_level = "safe"
         confidence = 0.95
@@ -229,5 +212,6 @@ def analyze_single_url(url: str) -> dict:
         "risk_level": risk_level,
         "confidence": round(confidence, 4),
         "threat_indicators": threat_indicators,
-        "features": features
+        "features": features,
+        "reasoning": reasoning  # ✅ ADDED
     }

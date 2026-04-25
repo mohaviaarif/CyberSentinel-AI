@@ -2,13 +2,14 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 
 /* Icons */
-import HomeIcon from "@mui/icons-material/Home";                 // HEADER toggle button
-import DashboardCustomizeIcon from "@mui/icons-material/DashboardCustomize"; // NEW dashboard icon
+import HomeIcon from "@mui/icons-material/Home";
+import DashboardCustomizeIcon from "@mui/icons-material/DashboardCustomize";
 import LightbulbIcon from "@mui/icons-material/Lightbulb";
 import InfoIcon from "@mui/icons-material/Info";
 import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
 import ContactMailIcon from "@mui/icons-material/ContactMail";
 import PageviewIcon from "@mui/icons-material/Pageview";
+import LinkIcon from "@mui/icons-material/Link"; // ✅ NEW ICON
 import LogoutIcon from "@mui/icons-material/Logout";
 
 export function Sidebar({ collapsed, setCollapsed }) {
@@ -28,7 +29,6 @@ export function Sidebar({ collapsed, setCollapsed }) {
       {/* HEADER */}
       <div className="sidebar-header-ent">
 
-        {/* HOME ICON = TOGGLE BUTTON */}
         <div
           className="sidebar-logo-circle toggle-home-btn"
           onClick={() => setCollapsed(!collapsed)}
@@ -81,10 +81,18 @@ export function Sidebar({ collapsed, setCollapsed }) {
           <ContactMailIcon /> {!collapsed && "Contact"}
         </NavLink>
 
+        {/* EMAIL ANALYZE */}
         <NavLink to="/analyze" className={({ isActive }) =>
           "sidebar-nav-item-pro" + (isActive ? " active" : "")
         }>
           <PageviewIcon /> {!collapsed && "Analyze Email"}
+        </NavLink>
+
+        {/* ✅ NEW: URL SCAN */}
+        <NavLink to="/url-scan" className={({ isActive }) =>
+          "sidebar-nav-item-pro" + (isActive ? " active" : "")
+        }>
+          <LinkIcon /> {!collapsed && "Scan URL"}
         </NavLink>
 
       </nav>

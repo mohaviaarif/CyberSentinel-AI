@@ -21,6 +21,7 @@ import FeaturesPage from "./FeaturesPage";
 import FAQPage from "./FAQPage";
 import ContactPage from "./ContactPage";
 import AnalyzePage from "./AnalyzePage";
+import URLScanPage from "./URLScanPage"; // ✅ ADDED
 
 // --- Auth Pages ---
 import LoginPage from "./loginpage";
@@ -139,12 +140,10 @@ function App() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [toast, setToast] = useState(null);
 
-  // ⭐ Reactive login state
   const [isLoggedIn, setIsLoggedIn] = useState(
     localStorage.getItem("isLoggedIn") === "true"
   );
 
-  // Listen for login state changes
   useEffect(() => {
     const sync = () => {
       setIsLoggedIn(localStorage.getItem("isLoggedIn") === "true");
@@ -173,7 +172,7 @@ function App() {
 
       <div className="app-layout-pro">
 
-        {/* SIDEBAR (Only visible when logged in) */}
+        {/* SIDEBAR */}
         {isLoggedIn && (
           <Sidebar
             collapsed={sidebarCollapsed}
@@ -181,7 +180,6 @@ function App() {
           />
         )}
 
-        {/* ⭐ FIXED MAIN CONTENT WRAP — moves smoothly with sidebar */}
         <div
           className="main-page-wrap"
           style={{
@@ -301,14 +299,28 @@ function App() {
                   }
                 />
 
+                {/* ✅ NEW URL SCAN ROUTE */}
+                <Route
+                  path="/url-scan"
+                  element={
+                    <RequireAuth>
+                      <PageTransition>
+                        <TitleWrapper title="URL Scanner">
+                          <URLScanPage />
+                        </TitleWrapper>
+                      </PageTransition>
+                    </RequireAuth>
+                  }
+                />
+
                 {/* Redirect Unknown Routes */}
                 <Route path="*" element={<Navigate to="/" replace />} />
+
               </Routes>
 
             </Suspense>
           </main>
 
-          {/* FOOTER (Only when logged in) */}
           {isLoggedIn && <Footer />}
         </div>
       </div>

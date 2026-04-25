@@ -601,6 +601,27 @@ html, body {
 
 .analyze-input-pro {
   width: 100%;
+  height: 60px; /* 🔥 FIXED */
+  border: 2px solid rgba(41, 121, 255, 0.25);
+  outline: none;
+  background: rgba(15, 20, 25, 0.9);
+  border-radius: 1em;
+  color: #F2F6FF;
+  font-size: 1em;
+  padding: 0 15px; /* 🔥 FIXED */
+  box-shadow: 0 8px 24px rgba(41, 121, 255, 0.08),
+              inset 0 1px 2px rgba(255,255,255,0.05);
+  transition: all 0.3s ease;
+}
+
+.analyze-input-pro:focus {
+  border-color: rgba(41, 121, 255, 0.6);
+  box-shadow: 0 0 30px rgba(41, 121, 255, 0.3),
+               inset 0 1px 2px rgba(255,255,255,0.05);
+}
+
+.analyze-textarea-pro {
+  width: 100%;
   min-height: 300px;
   border: 2px solid rgba(41, 121, 255, 0.25);
   outline: none;
@@ -616,7 +637,7 @@ html, body {
   transition: all 0.3s ease;
 }
 
-.analyze-input-pro:focus {
+.analyze-textarea-pro:focus {
   border-color: rgba(41, 121, 255, 0.6);
   box-shadow: 0 0 30px rgba(41, 121, 255, 0.3),
                inset 0 1px 2px rgba(255,255,255,0.05);
