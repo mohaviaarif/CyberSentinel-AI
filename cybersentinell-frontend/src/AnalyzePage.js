@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   FaExclamationTriangle,
   FaInfoCircle,
@@ -12,6 +12,9 @@ function AnalyzePage() {
   const [emailContent, setEmailContent] = useState("");
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  const fileInputRef = useRef();
+  const [loadedFileName, setLoadedFileName] = useState("");
 
   const handleAnalyze = async () => {
     if (!emailContent.trim()) {
@@ -37,7 +40,6 @@ function AnalyzePage() {
       }
 
       const backend = data;
-
       const confidence = Math.round(backend.confidence * 100);
 
       let verdict = "Safe";
@@ -79,6 +81,27 @@ function AnalyzePage() {
   const handleClear = () => {
     setEmailContent("");
     setResult(null);
+    setLoadedFileName("");
+
+    // FIX: allow same file upload again
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = (event) => {
+      setEmailContent(event.target.result);
+      setLoadedFileName(file.name);
+      setResult(null);
+    };
+
+    reader.readAsText(file);
   };
 
   const downloadPDF = async () => {
@@ -88,14 +111,10 @@ function AnalyzePage() {
     const pdfBlock = document.getElementById("pdf-report");
     if (!pdfBlock) return;
 
-    pdfBlock.style.display = "block";
-
     const canvas = await html2canvas(pdfBlock, {
       scale: 2,
       backgroundColor: "#FFFFFF"
     });
-
-    pdfBlock.style.display = "none";
 
     const pdf = new jsPDF("p", "mm", "a4");
     const imgData = canvas.toDataURL("image/png");
@@ -124,6 +143,36 @@ function AnalyzePage() {
         onChange={(e) => setEmailContent(e.target.value)}
       />
 
+      <div style={{ marginTop: "0.8em" }}>
+        <button
+          onClick={() => fileInputRef.current.click()}
+          style={{
+            background: "none",
+            border: "none",
+            color: "#7FB3FF",
+            fontSize: "0.9em",
+            cursor: "pointer",
+            textDecoration: "underline"
+          }}
+        >
+          Or upload a .txt or .eml file
+        </button>
+
+        <input
+          type="file"
+          ref={fileInputRef}
+          accept=".txt,.eml"
+          style={{ display: "none" }}
+          onChange={handleFileUpload}
+        />
+
+        {loadedFileName && (
+          <p style={{ color: "#00E5A0", fontSize: "0.85em", marginTop: "0.3em" }}>
+            Loaded: {loadedFileName}
+          </p>
+        )}
+      </div>
+
       <div style={{ display: "flex", gap: "1em", marginTop: "1.5em" }}>
         <button
           className="analyze-btn-pro"
@@ -133,7 +182,6 @@ function AnalyzePage() {
           {loading ? "⟳ Analyzing..." : "🔍 Analyze Email"}
         </button>
 
-        {/* ✅ FIXED CLEAR BUTTON */}
         <button
           className="analyze-btn-pro"
           onClick={handleClear}
@@ -148,49 +196,33 @@ function AnalyzePage() {
       </div>
 
       {result && (
-        <div
-          className="analyze-result-pro"
-          style={{
-            marginTop: "2.5em",
-            borderLeft: `6px solid ${result.color}`,
-            boxShadow: getGlow(),
-            transition: "0.3s ease"
-          }}
-        >
-          <h2
+        <div id="pdf-report">
+          <div
+            className="analyze-result-pro"
             style={{
-              color: result.color,
-              fontSize: "2em",
-              display: "flex",
-              alignItems: "center",
-              gap: "0.5em"
+              marginTop: "2.5em",
+              borderLeft: `6px solid ${result.color}`,
+              boxShadow: getGlow(),
+              transition: "0.3s ease"
             }}
           >
-            {result.verdict === "Phishing" && <FaExclamationTriangle />}
-            {result.verdict === "Suspicious" && <FaInfoCircle />}
-            {result.verdict === "Safe" && <FaCheckCircle />}
+            <h2 style={{ color: result.color }}>
+              {result.verdict} ({result.riskLevel} Risk)
+            </h2>
 
-            {result.verdict} ({result.riskLevel} Risk)
-          </h2>
-
-          <p style={{ marginTop: "1em", fontSize: "1.2em" }}>
-            <b>Confidence:</b> {result.confidence}%
-          </p>
-
-          <div style={{ marginTop: "1.5em" }}>
-            <h3 style={{ color: "#2979FF" }}>AI Reasoning</h3>
-            <p style={{ color: "#A4C7EC" }}>{result.reasoning}</p>
-          </div>
-
-          <h3 style={{ marginTop: "1.5em", color: "#2979FF" }}>
-            Threat Indicators
-          </h3>
-
-          {result.threats.length === 0 ? (
-            <p style={{ color: "#FF4C4C" }}>
-              No major phishing patterns detected
+            <p style={{ marginTop: "1em", fontSize: "1.2em" }}>
+              <b>Confidence:</b> {result.confidence}%
             </p>
-          ) : (
+
+            <div style={{ marginTop: "1.5em" }}>
+              <h3 style={{ color: "#2979FF" }}>AI Reasoning</h3>
+              <p style={{ color: "#A4C7EC" }}>{result.reasoning}</p>
+            </div>
+
+            <h3 style={{ marginTop: "1.5em", color: "#2979FF" }}>
+              Threat Indicators
+            </h3>
+
             <ul>
               {result.threats.map((t, i) => (
                 <li key={i} style={{ display: "flex", gap: "0.5em" }}>
@@ -198,38 +230,32 @@ function AnalyzePage() {
                 </li>
               ))}
             </ul>
-          )}
 
-          <h3 style={{ marginTop: "1.5em", color: "#00E5A0" }}>
-            Safety Tips
-          </h3>
+            <h3 style={{ marginTop: "1.5em", color: "#00E5A0" }}>
+              Safety Tips
+            </h3>
 
-          <ul>
-            {result.safetyTips.map((t, i) => (
-              <li key={i} style={{ display: "flex", gap: "0.5em" }}>
-                <FaCheck color="#00E5A0" /> {t}
-              </li>
-            ))}
-          </ul>
+            <ul>
+              {result.safetyTips.map((t, i) => (
+                <li key={i} style={{ display: "flex", gap: "0.5em" }}>
+                  <FaCheck color="#00E5A0" /> {t}
+                </li>
+              ))}
+            </ul>
 
-          <button
-            onClick={downloadPDF}
-            style={{
-              marginTop: "2em",
-              padding: "1em 2.5em",
-              background: "linear-gradient(90deg, #2979FF, #00E5A0)",
-              borderRadius: "1em",
-              border: "none",
-              color: "white",
-              fontWeight: 700,
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              gap: "0.7em"
-            }}
-          >
-            <FaFileDownload /> Download PDF Report
-          </button>
+            <button
+              onClick={downloadPDF}
+              className="analyze-btn-pro"
+              style={{
+                marginTop: "2em",
+                display: "flex",
+                alignItems: "center",
+                gap: "0.7em"
+              }}
+            >
+              <FaFileDownload /> Download PDF Report
+            </button>
+          </div>
         </div>
       )}
     </div>

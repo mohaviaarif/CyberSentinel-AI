@@ -9,7 +9,8 @@ import InfoIcon from "@mui/icons-material/Info";
 import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
 import ContactMailIcon from "@mui/icons-material/ContactMail";
 import PageviewIcon from "@mui/icons-material/Pageview";
-import LinkIcon from "@mui/icons-material/Link"; // ✅ NEW ICON
+import LinkIcon from "@mui/icons-material/Link";
+import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile"; // ✅ NEW ICON
 import LogoutIcon from "@mui/icons-material/Logout";
 
 export function Sidebar({ collapsed, setCollapsed }) {
@@ -88,11 +89,18 @@ export function Sidebar({ collapsed, setCollapsed }) {
           <PageviewIcon /> {!collapsed && "Analyze Email"}
         </NavLink>
 
-        {/* ✅ NEW: URL SCAN */}
+        {/* URL SCAN */}
         <NavLink to="/url-scan" className={({ isActive }) =>
           "sidebar-nav-item-pro" + (isActive ? " active" : "")
         }>
           <LinkIcon /> {!collapsed && "Scan URL"}
+        </NavLink>
+
+        {/* ✅ NEW: FILE SCAN */}
+        <NavLink to="/file-scan" className={({ isActive }) =>
+          "sidebar-nav-item-pro" + (isActive ? " active" : "")
+        }>
+          <InsertDriveFileIcon /> {!collapsed && "Scan File"}
         </NavLink>
 
       </nav>

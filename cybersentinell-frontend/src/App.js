@@ -21,7 +21,8 @@ import FeaturesPage from "./FeaturesPage";
 import FAQPage from "./FAQPage";
 import ContactPage from "./ContactPage";
 import AnalyzePage from "./AnalyzePage";
-import URLScanPage from "./URLScanPage"; // ✅ ADDED
+import URLScanPage from "./URLScanPage";
+import FileScanPage from "./FileScanPage"; // ✅ NEW IMPORT
 
 // --- Auth Pages ---
 import LoginPage from "./loginpage";
@@ -299,7 +300,7 @@ function App() {
                   }
                 />
 
-                {/* ✅ NEW URL SCAN ROUTE */}
+                {/* URL SCAN */}
                 <Route
                   path="/url-scan"
                   element={
@@ -307,6 +308,20 @@ function App() {
                       <PageTransition>
                         <TitleWrapper title="URL Scanner">
                           <URLScanPage />
+                        </TitleWrapper>
+                      </PageTransition>
+                    </RequireAuth>
+                  }
+                />
+
+                {/* ✅ NEW FILE SCAN ROUTE */}
+                <Route
+                  path="/file-scan"
+                  element={
+                    <RequireAuth>
+                      <PageTransition>
+                        <TitleWrapper title="File Scanner">
+                          <FileScanPage />
                         </TitleWrapper>
                       </PageTransition>
                     </RequireAuth>
