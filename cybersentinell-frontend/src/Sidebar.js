@@ -10,7 +10,7 @@ import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
 import ContactMailIcon from "@mui/icons-material/ContactMail";
 import PageviewIcon from "@mui/icons-material/Pageview";
 import LinkIcon from "@mui/icons-material/Link";
-import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile"; // ✅ NEW ICON
+import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import LogoutIcon from "@mui/icons-material/Logout";
 
 export function Sidebar({ collapsed, setCollapsed }) {
@@ -48,6 +48,7 @@ export function Sidebar({ collapsed, setCollapsed }) {
       {/* NAVIGATION */}
       <nav className="sidebar-nav-pro">
 
+        {/* DASHBOARD */}
         <NavLink
           to="/"
           className={({ isActive }) =>
@@ -58,31 +59,7 @@ export function Sidebar({ collapsed, setCollapsed }) {
           {!collapsed && "Dashboard"}
         </NavLink>
 
-        <NavLink to="/about" className={({ isActive }) =>
-          "sidebar-nav-item-pro" + (isActive ? " active" : "")
-        }>
-          <InfoIcon /> {!collapsed && "About"}
-        </NavLink>
-
-        <NavLink to="/features" className={({ isActive }) =>
-          "sidebar-nav-item-pro" + (isActive ? " active" : "")
-        }>
-          <LightbulbIcon /> {!collapsed && "Features"}
-        </NavLink>
-
-        <NavLink to="/faq" className={({ isActive }) =>
-          "sidebar-nav-item-pro" + (isActive ? " active" : "")
-        }>
-          <QuestionAnswerIcon /> {!collapsed && "FAQ"}
-        </NavLink>
-
-        <NavLink to="/contact" className={({ isActive }) =>
-          "sidebar-nav-item-pro" + (isActive ? " active" : "")
-        }>
-          <ContactMailIcon /> {!collapsed && "Contact"}
-        </NavLink>
-
-        {/* EMAIL ANALYZE */}
+        {/* ANALYZE EMAIL */}
         <NavLink to="/analyze" className={({ isActive }) =>
           "sidebar-nav-item-pro" + (isActive ? " active" : "")
         }>
@@ -96,11 +73,39 @@ export function Sidebar({ collapsed, setCollapsed }) {
           <LinkIcon /> {!collapsed && "Scan URL"}
         </NavLink>
 
-        {/* ✅ NEW: FILE SCAN */}
+        {/* FILE SCAN */}
         <NavLink to="/file-scan" className={({ isActive }) =>
           "sidebar-nav-item-pro" + (isActive ? " active" : "")
         }>
           <InsertDriveFileIcon /> {!collapsed && "Scan File"}
+        </NavLink>
+
+        {/* ABOUT */}
+        <NavLink to="/about" className={({ isActive }) =>
+          "sidebar-nav-item-pro" + (isActive ? " active" : "")
+        }>
+          <InfoIcon /> {!collapsed && "About"}
+        </NavLink>
+
+        {/* FEATURES */}
+        <NavLink to="/features" className={({ isActive }) =>
+          "sidebar-nav-item-pro" + (isActive ? " active" : "")
+        }>
+          <LightbulbIcon /> {!collapsed && "Features"}
+        </NavLink>
+
+        {/* FAQ */}
+        <NavLink to="/faq" className={({ isActive }) =>
+          "sidebar-nav-item-pro" + (isActive ? " active" : "")
+        }>
+          <QuestionAnswerIcon /> {!collapsed && "FAQ"}
+        </NavLink>
+
+        {/* CONTACT */}
+        <NavLink to="/contact" className={({ isActive }) =>
+          "sidebar-nav-item-pro" + (isActive ? " active" : "")
+        }>
+          <ContactMailIcon /> {!collapsed && "Contact"}
         </NavLink>
 
       </nav>

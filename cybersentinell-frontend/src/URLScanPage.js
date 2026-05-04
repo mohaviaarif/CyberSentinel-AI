@@ -1,8 +1,5 @@
 import React, { useState } from "react";
 import {
-  FaExclamationTriangle,
-  FaInfoCircle,
-  FaCheckCircle,
   FaCheck,
   FaBug,
   FaFileDownload
@@ -13,10 +10,18 @@ function URLScanPage() {
   const [urlInput, setUrlInput] = useState("");
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleAnalyze = async () => {
+    setError("");
+
     if (!urlInput.trim()) {
-      alert("Please enter a URL to scan");
+      setError("Please enter a URL to analyze");
+      return;
+    }
+
+    if (!/^https?:\/\//i.test(urlInput)) {
+      setError("Please enter a valid URL starting with http or https");
       return;
     }
 
@@ -33,23 +38,21 @@ function URLScanPage() {
       const data = response.data;
 
       if (!data || !data.success || !data.result) {
-        alert(data?.error || "Invalid response from server.");
+        setError(data?.error || "Something went wrong. Please try again.");
         setLoading(false);
         return;
       }
 
-      const backend = data;
-      const res = backend.result?.toLowerCase();
+      const res = data.result?.toLowerCase();
 
-      let confidenceRaw = backend.confidence || 0;
       const confidence =
-        confidenceRaw <= 1
-          ? Math.round(confidenceRaw * 100)
-          : Math.round(confidenceRaw);
+        data.confidence <= 1
+          ? Math.round(data.confidence * 100)
+          : Math.round(data.confidence);
 
       let verdict = "Safe";
       let riskLevel = "Low";
-      let color = "#00BFAE";
+      let color = "#00E5A0";
 
       if (res === "suspicious") {
         verdict = "Suspicious";
@@ -63,34 +66,30 @@ function URLScanPage() {
         color = "#FF4C4C";
       }
 
-      try {
-        const prev = parseInt(
-          localStorage.getItem("urlScannedCount") || "0",
-          10
-        );
-        localStorage.setItem("urlScannedCount", String(prev + 1));
-      } catch (e) {
-        console.warn("LocalStorage error", e);
-      }
-
       setResult({
         verdict,
         confidence,
         riskLevel,
         color,
-        score: backend.score || 0,
-        threats: backend.threat_indicators || [],
-        safetyTips: backend.tips || []
+        score: data.score || 0,
+        threats: data.threat_indicators || [],
+        safetyTips: data.tips || []
       });
-    } catch (err) {
-      console.error(err);
 
-      const message =
-        err.response?.data?.error ||
-        err.message ||
-        "Backend connection error.";
+    } catch (error) {
+      if (error.response) {
+        const msg =
+          error.response.data?.error ||
+          "Something went wrong. Please try again.";
+        setError(msg);
+      } else if (error.request) {
+        setError("Unable to reach server. Please try again.");
+      } else {
+        setError("Something went wrong. Please try again.");
+      }
 
-      alert(message);
+      setLoading(false);
+      return;
     }
 
     setLoading(false);
@@ -99,37 +98,20 @@ function URLScanPage() {
   const handleClear = () => {
     setUrlInput("");
     setResult(null);
+    setError("");
   };
 
   const downloadPDF = async () => {
     const { jsPDF } = await import("jspdf");
     const html2canvas = (await import("html2canvas")).default;
 
-    const original = document.getElementById("pdf-report-url");
-    if (!original) return;
+    const element = document.getElementById("pdf-report-url");
+    if (!element) return;
 
-    const clone = original.cloneNode(true);
-
-    clone.style.display = "block";
-    clone.style.position = "absolute";
-    clone.style.top = "-9999px";
-    clone.style.left = "0";
-    clone.style.background = "#ffffff";
-    clone.style.color = "#000000";
-    clone.style.width = "800px";
-    clone.style.padding = "30px";
-    clone.style.fontFamily = "Arial";
-    clone.style.boxShadow = "none";
-
-    document.body.appendChild(clone);
-
-    const canvas = await html2canvas(clone, {
+    const canvas = await html2canvas(element, {
       scale: 2,
-      backgroundColor: "#ffffff",
-      useCORS: true
+      backgroundColor: "#ffffff"
     });
-
-    document.body.removeChild(clone);
 
     const pdf = new jsPDF("p", "mm", "a4");
     const imgData = canvas.toDataURL("image/png");
@@ -141,26 +123,29 @@ function URLScanPage() {
     pdf.save("CyberSentinel_URL_Report.pdf");
   };
 
-  const getGlowClass = () => {
-    if (!result) return "";
-    if (result.riskLevel === "High") return "glow-danger";
-    if (result.riskLevel === "Medium") return "glow-warning";
-    return "";
-  };
-
-  const timestamp = new Date().toLocaleString();
-
   return (
     <div className="analyze-page-pro">
-      <h1>URL Threat Scanner</h1>
+
+      <h1 style={{ marginBottom: "1em" }}>
+        URL Threat Scanner
+      </h1>
+
+      {error && (
+        <p style={{
+          color: "#FF4C4C",
+          marginBottom: "10px",
+          fontWeight: "500"
+        }}>
+          {error}
+        </p>
+      )}
 
       <input
         type="text"
         className="analyze-input-pro"
-        placeholder="Enter URL to scan e.g. http://example.com"
+        placeholder="Enter URL to scan"
         value={urlInput}
         onChange={(e) => setUrlInput(e.target.value)}
-        onKeyDown={(e) => e.key === "Enter" && handleAnalyze()}
       />
 
       <div style={{ display: "flex", gap: "1em", marginTop: "1.5em" }}>
@@ -169,10 +154,9 @@ function URLScanPage() {
           onClick={handleAnalyze}
           disabled={loading}
         >
-          {loading ? "⟳ Analyzing..." : "🔍 Analyze URL"}
+          {loading ? "⟳ Checking URL..." : "🔍 Analyze URL"}
         </button>
 
-        {/* ✅ FIXED CLEAR BUTTON */}
         <button
           className="analyze-btn-pro"
           onClick={handleClear}
@@ -187,102 +171,94 @@ function URLScanPage() {
       </div>
 
       {result && (
-        <>
+        <div id="pdf-report-url">
           <div
-            className={`analyze-result-pro ${getGlowClass()}`}
+            className="analyze-result-pro"
             style={{
               marginTop: "2.5em",
-              borderLeft: `6px solid ${result.color}`
+              borderLeft: `6px solid ${result.color}`,
+              boxShadow: `0 0 25px ${result.color}55`,
+              padding: "22px",
+              borderRadius: "14px"
             }}
           >
+
             <h2 style={{ color: result.color }}>
-              {result.verdict} ({result.riskLevel})
+              {result.verdict} ({result.riskLevel} Risk)
             </h2>
 
-            <p style={{ color: result.color, fontWeight: 700 }}>
+            <p><b>Confidence:</b> {result.confidence}%</p>
+
+            <p style={{ fontWeight: "bold", color: result.color }}>
               Threat Score: {result.score}
             </p>
 
-            <p>Confidence: {result.confidence}%</p>
+            <div style={{
+              marginTop: "10px",
+              height: "8px",
+              background: "#1e2a38"
+            }}>
+              <div style={{
+                width: `${result.confidence}%`,
+                height: "100%",
+                background: result.color
+              }} />
+            </div>
 
-            <h3>Threat Indicators</h3>
+            <h3 style={{ marginTop: "1.5em", color: "#2979FF" }}>
+              Threat Indicators
+            </h3>
+
             <ul>
               {result.threats.map((t, i) => (
-                <li key={i}>
-                  <FaBug color="#FF4C4C" /> {t}
-                </li>
+                <li key={i}><FaBug /> {t}</li>
               ))}
             </ul>
 
-            <h3>Safety Tips</h3>
+            <h3 style={{ marginTop: "1.5em", color: "#00E5A0" }}>
+              Safety Tips
+            </h3>
+
             <ul>
               {result.safetyTips.map((t, i) => (
-                <li key={i}>
-                  <FaCheck color="#00BFAE" /> {t}
-                </li>
+                <li key={i}><FaCheck /> {t}</li>
               ))}
             </ul>
 
-            <button
-              onClick={downloadPDF}
-              style={{
-                marginTop: "2em",
-                padding: "1em 2.5em",
-                background: "linear-gradient(90deg, #2979FF, #00BFAE)",
-                borderRadius: "1em",
-                border: "none",
-                color: "white",
-                fontWeight: 700,
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                gap: "0.7em"
-              }}
-            >
-              <FaFileDownload /> Download PDF Report
-            </button>
+            {/* 🔥 FIXED BUTTON SECTION */}
+            <div style={{
+              marginTop: "2em",
+              display: "flex",
+              flexDirection: "column",
+              gap: "10px"
+            }}>
+
+              <button
+                onClick={downloadPDF}
+                className="analyze-btn-pro"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "0.7em"
+                }}
+              >
+                <FaFileDownload /> Download PDF Report
+              </button>
+
+              <button
+                className="scan-again-btn"
+                onClick={handleClear}
+              >
+                Scan Again
+              </button>
+
+            </div>
+
           </div>
-
-          <div
-            id="pdf-report-url"
-            style={{
-              background: "#ffffff",
-              color: "#000000",
-              padding: "30px",
-              width: "800px",
-              display: "none",
-              fontFamily: "Arial"
-            }}
-          >
-            <h1>CyberSentinel AI — URL Scan Report</h1>
-            <p>Generated on: {timestamp}</p>
-
-            <h2>
-              Verdict: {result.verdict} ({result.riskLevel})
-            </h2>
-
-            <h3>Threat Score</h3>
-            <p>{result.score}</p>
-
-            <h3>Confidence</h3>
-            <p>{result.confidence}%</p>
-
-            <h3>Threat Indicators</h3>
-            <ul>
-              {result.threats.map((t, i) => (
-                <li key={i}>{t}</li>
-              ))}
-            </ul>
-
-            <h3>Safety Tips</h3>
-            <ul>
-              {result.safetyTips.map((t, i) => (
-                <li key={i}>{t}</li>
-              ))}
-            </ul>
-          </div>
-        </>
+        </div>
       )}
+
     </div>
   );
 }

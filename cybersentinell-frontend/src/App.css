@@ -674,7 +674,34 @@ html, body {
   color: #D4E9FF;
   line-height: 1.8;
 }
+.scan-again-btn {
+  margin-top: 1.2em;
 
+  background: transparent;
+  border: 2px solid rgba(0, 212, 255, 0.4);
+  color: #7fdcff;
+  padding: 10px 18px;
+  border-radius: 1.2em;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+
+  width: 100%;
+  align-self: flex-start; /* 🔥 important for layout */
+}
+
+/* hover */
+.scan-again-btn:hover {
+  border-color: #00d4ff;
+  color: #00d4ff;
+  background: rgba(0, 212, 255, 0.08);
+  box-shadow: 0 0 12px rgba(0, 212, 255, 0.2);
+}
+
+/* click */
+.scan-again-btn:active {
+  transform: scale(0.96);
+}
 /* === LANDING PAGE === */
 
 .landing-pro {

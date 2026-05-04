@@ -1,8 +1,5 @@
 import React, { useState, useRef } from "react";
 import {
-  FaExclamationTriangle,
-  FaInfoCircle,
-  FaCheckCircle,
   FaCheck,
   FaBug,
   FaFileDownload
@@ -12,13 +9,16 @@ function AnalyzePage() {
   const [emailContent, setEmailContent] = useState("");
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const fileInputRef = useRef();
   const [loadedFileName, setLoadedFileName] = useState("");
 
   const handleAnalyze = async () => {
+    setError("");
+
     if (!emailContent.trim()) {
-      alert("Please paste an email to analyze");
+      setError("Please enter email text to analyze");
       return;
     }
 
@@ -34,25 +34,23 @@ function AnalyzePage() {
       const data = await response.json();
 
       if (!response.ok) {
-        alert(data.error || "Error analyzing email.");
-        setLoading(false);
+        setError(data.error || "Something went wrong. Please try again.");
         return;
       }
 
-      const backend = data;
-      const confidence = Math.round(backend.confidence * 100);
+      const confidence = Math.round(data.confidence * 100);
 
       let verdict = "Safe";
       let riskLevel = "Low";
       let color = "#00E5A0";
 
-      if (backend.prediction === "suspicious") {
+      if (data.prediction === "suspicious") {
         verdict = "Suspicious";
         riskLevel = "Medium";
         color = "#FFC947";
       }
 
-      if (backend.prediction === "spam") {
+      if (data.prediction === "spam") {
         verdict = "Phishing";
         riskLevel = "High";
         color = "#FF4C4C";
@@ -63,16 +61,16 @@ function AnalyzePage() {
         confidence,
         riskLevel,
         color,
-        threats: backend.threats || [],
+        threats: data.threats || [],
         reasoning:
-          backend.threats?.length > 0
-            ? backend.threats.join(" • ")
+          data.threats?.length > 0
+            ? data.threats.join(" • ")
             : "No major phishing patterns detected",
-        safetyTips: backend.tips || []
+        safetyTips: data.tips || []
       });
+
     } catch (err) {
-      console.error(err);
-      alert("Backend connection error.");
+      setError("Unable to reach server. Please try again.");
     }
 
     setLoading(false);
@@ -82,11 +80,8 @@ function AnalyzePage() {
     setEmailContent("");
     setResult(null);
     setLoadedFileName("");
-
-    // FIX: allow same file upload again
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
+    setError("");
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const handleFileUpload = (e) => {
@@ -99,6 +94,7 @@ function AnalyzePage() {
       setEmailContent(event.target.result);
       setLoadedFileName(file.name);
       setResult(null);
+      setError("");
     };
 
     reader.readAsText(file);
@@ -126,14 +122,18 @@ function AnalyzePage() {
     pdf.save("CyberSentinel_Report.pdf");
   };
 
-  const getGlow = () => {
-    if (!result) return "none";
-    return `0 0 25px ${result.color}55`;
-  };
-
   return (
     <div className="analyze-page-pro">
-      <h1 style={{ marginBottom: "1em" }}>Email Threat Analyzer</h1>
+
+      <h1 style={{ marginBottom: "1em" }}>
+        Email Threat Analyzer
+      </h1>
+
+      {error && (
+        <p style={{ color: "#FF4C4C", marginBottom: "10px", fontWeight: "500" }}>
+          {error}
+        </p>
+      )}
 
       <textarea
         className="analyze-textarea-pro"
@@ -144,17 +144,13 @@ function AnalyzePage() {
       />
 
       <div style={{ marginTop: "0.8em" }}>
-        <button
-          onClick={() => fileInputRef.current.click()}
-          style={{
-            background: "none",
-            border: "none",
-            color: "#7FB3FF",
-            fontSize: "0.9em",
-            cursor: "pointer",
-            textDecoration: "underline"
-          }}
-        >
+        <button onClick={() => fileInputRef.current.click()} style={{
+          background: "none",
+          border: "none",
+          color: "#7FB3FF",
+          cursor: "pointer",
+          textDecoration: "underline"
+        }}>
           Or upload a .txt or .eml file
         </button>
 
@@ -167,97 +163,84 @@ function AnalyzePage() {
         />
 
         {loadedFileName && (
-          <p style={{ color: "#00E5A0", fontSize: "0.85em", marginTop: "0.3em" }}>
+          <p style={{ color: "#00E5A0", marginTop: "5px" }}>
             Loaded: {loadedFileName}
           </p>
         )}
       </div>
 
       <div style={{ display: "flex", gap: "1em", marginTop: "1.5em" }}>
-        <button
-          className="analyze-btn-pro"
-          onClick={handleAnalyze}
-          disabled={loading}
-        >
-          {loading ? "⟳ Analyzing..." : "🔍 Analyze Email"}
+        <button className="analyze-btn-pro" onClick={handleAnalyze} disabled={loading}>
+          {loading ? "⟳ Analyzing email..." : "🔍 Analyze Email"}
         </button>
 
-        <button
-          className="analyze-btn-pro"
-          onClick={handleClear}
-          style={{
-            background: "rgba(41,121,255,0.2)",
-            color: "#2979FF",
-            border: "2px solid rgba(41,121,255,0.4)"
-          }}
-        >
+        <button className="analyze-btn-pro" onClick={handleClear} style={{
+          background: "rgba(41,121,255,0.2)",
+          color: "#2979FF",
+          border: "2px solid rgba(41,121,255,0.4)"
+        }}>
           Clear
         </button>
       </div>
 
       {result && (
         <div id="pdf-report">
-          <div
-            className="analyze-result-pro"
-            style={{
-              marginTop: "2.5em",
-              borderLeft: `6px solid ${result.color}`,
-              boxShadow: getGlow(),
-              transition: "0.3s ease"
-            }}
-          >
+          <div className="analyze-result-pro" style={{
+            marginTop: "2.5em",
+            borderLeft: `6px solid ${result.color}`,
+            boxShadow: `0 0 25px ${result.color}55`,
+            padding: "22px",
+            borderRadius: "14px"
+          }}>
+
             <h2 style={{ color: result.color }}>
               {result.verdict} ({result.riskLevel} Risk)
             </h2>
 
-            <p style={{ marginTop: "1em", fontSize: "1.2em" }}>
-              <b>Confidence:</b> {result.confidence}%
-            </p>
+            <p><b>Confidence:</b> {result.confidence}%</p>
 
-            <div style={{ marginTop: "1.5em" }}>
-              <h3 style={{ color: "#2979FF" }}>AI Reasoning</h3>
-              <p style={{ color: "#A4C7EC" }}>{result.reasoning}</p>
+            <div style={{ marginTop: "10px", height: "8px", background: "#1e2a38" }}>
+              <div style={{
+                width: `${result.confidence}%`,
+                height: "100%",
+                background: result.color
+              }} />
             </div>
 
-            <h3 style={{ marginTop: "1.5em", color: "#2979FF" }}>
-              Threat Indicators
-            </h3>
+            <h3 style={{ marginTop: "1.5em", color: "#2979FF" }}>AI Reasoning</h3>
+            <p>{result.reasoning}</p>
 
+            <h3 style={{ marginTop: "1.5em", color: "#2979FF" }}>Threat Indicators</h3>
             <ul>
               {result.threats.map((t, i) => (
-                <li key={i} style={{ display: "flex", gap: "0.5em" }}>
-                  <FaBug color="#FF4C4C" /> {t}
-                </li>
+                <li key={i}><FaBug /> {t}</li>
               ))}
             </ul>
 
-            <h3 style={{ marginTop: "1.5em", color: "#00E5A0" }}>
-              Safety Tips
-            </h3>
-
+            <h3 style={{ marginTop: "1.5em", color: "#00E5A0" }}>Safety Tips</h3>
             <ul>
               {result.safetyTips.map((t, i) => (
-                <li key={i} style={{ display: "flex", gap: "0.5em" }}>
-                  <FaCheck color="#00E5A0" /> {t}
-                </li>
+                <li key={i}><FaCheck /> {t}</li>
               ))}
             </ul>
 
-            <button
-              onClick={downloadPDF}
-              className="analyze-btn-pro"
-              style={{
-                marginTop: "2em",
-                display: "flex",
-                alignItems: "center",
-                gap: "0.7em"
-              }}
-            >
-              <FaFileDownload /> Download PDF Report
-            </button>
+            {/* 🔥 FIXED BUTTON LAYOUT */}
+            <div style={{ marginTop: "2em", display: "flex", flexDirection: "column", gap: "10px" }}>
+
+              <button onClick={downloadPDF} className="analyze-btn-pro">
+                <FaFileDownload /> Download PDF Report
+              </button>
+
+              <button className="scan-again-btn" onClick={handleClear}>
+                Scan Again
+              </button>
+
+            </div>
+
           </div>
         </div>
       )}
+
     </div>
   );
 }
