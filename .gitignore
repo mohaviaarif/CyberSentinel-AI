@@ -14,12 +14,9 @@ __pycache__/
 users.db
 *.db
 
-# ML models
-*.pkl
-
 # Logs
 *.log
+backend/logs/
 
 # Node modules (frontend)
 node_modules/
-backend/logs/

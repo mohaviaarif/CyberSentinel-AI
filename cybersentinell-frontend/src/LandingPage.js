@@ -322,13 +322,11 @@ export function LandingPage() {
                   letterSpacing: 2, textTransform: "uppercase",
                   marginBottom: 40, fontWeight: 500,
                 }}>
-                  <span>Real-time AI Threat Detection</span>
-<span style={{ color: "#1a3a55" }}>•</span>
-<span>Phishing</span>
-<span style={{ color: "#1a3a55" }}>•</span>
-<span>URLs</span>
-<span style={{ color: "#1a3a55" }}>•</span>
-<span>Malware</span>
+                  <span>Phishing Detection</span>
+                  <span style={{ color: "#1a3a55" }}>•</span>
+                  <span>URL Analysis</span>
+                  <span style={{ color: "#1a3a55" }}>•</span>
+                  <span>Malware Scanning</span>
                 </div>
               </FadeIn>
 
