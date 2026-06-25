@@ -221,19 +221,26 @@ function Footer() {
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 {[
-                  ["Institution", "COMSATS University"],
-                  ["Campus",      "Abbottabad"],
-                  ["Team",   "Mohavia Arif (084)"],
-                  ["",       "Anas Bashir (081)"],
-                  ["",       "A. Samad Paracha (056)"],
-                  ["Supervisor",  "Mr. Mazhar Ali"],
-                  ["Year",        "2026"],
-                ].map(([key, val]) => (
-                  <div key={key} style={{ display: "flex", gap: 6, fontSize: "0.78em" }}>
-                    <span style={{ color: "#1a3a55", fontWeight: 600, minWidth: 70 }}>{key}</span>
-                    <span style={{ color: "#2a4a65" }}>{val}</span>
-                  </div>
-                ))}
+  ["Institution", "COMSATS University"],
+  ["Campus",      "Abbottabad"],
+  ["Supervisor",  "Mr. Mazhar Ali"],
+  ["Year",        "2026"],
+].map(([key, val]) => (
+  <div key={key} style={{ display: "flex", gap: 6, fontSize: "0.78em" }}>
+    <span style={{ color: "#1a3a55", fontWeight: 600, minWidth: 70 }}>{key}</span>
+    <span style={{ color: "#2a4a65" }}>{val}</span>
+  </div>
+))}
+
+{/* Team members as separate static elements — no map needed */}
+<div style={{ marginTop: 6, fontSize: "0.78em" }}>
+  <div style={{ color: "#1a3a55", fontWeight: 600, marginBottom: 4 }}>Team</div>
+  <div style={{ color: "#2a4a65", lineHeight: 1.8 }}>
+    Mohavia Arif (084)<br />
+    Anas Bashir (081)<br />
+    Abdul Samad Paracha (056)
+  </div>
+</div>
               </div>
             </div>
           </div>

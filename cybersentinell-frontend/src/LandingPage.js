@@ -508,8 +508,8 @@ export function LandingPage() {
                   "API Key Protection",
                   "Audit Logging",
                   "Payload Validation",
-                ].map(feature => (
-                  <span key={feature} style={{
+                ].map((feature, index) => (
+  <span key={index} style={{
                     fontSize: 12, color: "#4a8a6a",
                     display: "flex", alignItems: "center", gap: 5,
                   }}>
@@ -534,7 +534,7 @@ export function LandingPage() {
               CyberSentinel AI — COMSATS University Islamabad, Abbottabad Campus
             </div>
             <div>
-              Final Year Project 2026 • Mohavia Arif (FA22-BCS-084) •{" "}
+              Final Year Project 2026 •{" "}
               <span style={{ color: "#3a6a85" }}>Supervised by Mr. Mazhar Ali</span>
             </div>
           </div>
