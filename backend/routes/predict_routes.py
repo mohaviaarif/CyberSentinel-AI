@@ -59,6 +59,7 @@ def predict():
         confidence = float(result.get("confidence", 0.0))
         threats = result.get("threats", [])
         tips = result.get("tips", [])
+        embedded_links = result.get("embedded_links", [])
 
         current_app.logger.info(
             f"Prediction complete -> label={label}, confidence={confidence}"
@@ -69,7 +70,8 @@ def predict():
             "prediction": label,
             "confidence": confidence,
             "threats": threats,
-            "tips": tips
+            "tips": tips,
+            "embedded_links": embedded_links
         }), 200
 
     except Exception as e:
@@ -149,7 +151,8 @@ def scan_email_file():
             "prediction": result["prediction"],
             "confidence": result["confidence"],
             "threats": result.get("threats", []),
-            "tips": result.get("tips", [])
+            "tips": result.get("tips", []),
+            "embedded_links": result.get("embedded_links", [])
         }), 200
 
     except Exception as e:

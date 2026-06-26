@@ -150,6 +150,7 @@ function AnalyzePage() {
       setResult({ verdict, confidence, riskLevel, color, glowClass,
         threats: data.threats || [],
         safetyTips: data.tips || [],
+        embedded_links: data.embedded_links || [],
       });
 
     } catch {
@@ -573,6 +574,83 @@ function AnalyzePage() {
                     {t}
                   </div>
                 ))}
+              </div>
+            )}
+
+            {result.embedded_links && result.embedded_links.length > 0 && (
+              <div className="embedded-links-section" style={{
+                marginTop: '20px',
+                padding: '16px',
+                background: 'rgba(255,255,255,0.04)',
+                borderRadius: '10px',
+                border: '1px solid rgba(255,255,255,0.1)'
+              }}>
+                <h4 style={{
+                  color: '#A4C7EC',
+                  marginBottom: '12px',
+                  fontSize: '14px',
+                  textTransform: 'uppercase',
+                  letterSpacing: '1px'
+                }}>
+                  Links Found Inside This Email ({result.embedded_links.length})
+                </h4>
+                {result.embedded_links.map((link, index) => {
+                  const colors = {
+                    safe: { bg: 'rgba(0,229,160,0.1)', border: '#00E5A0', badge: '#00E5A0', text: 'SAFE' },
+                    suspicious: { bg: 'rgba(255,201,71,0.1)', border: '#FFC947', badge: '#FFC947', text: 'SUSPICIOUS' },
+                    malicious: { bg: 'rgba(255,76,76,0.1)', border: '#FF4C4C', badge: '#FF4C4C', text: 'MALICIOUS' },
+                    error: { bg: 'rgba(150,150,150,0.1)', border: '#666', badge: '#666', text: 'ERROR' }
+                  };
+                  const scheme = colors[link.result] || colors.error;
+                  return (
+                    <div key={index} style={{
+                      padding: '10px 14px',
+                      marginBottom: '8px',
+                      background: scheme.bg,
+                      borderRadius: '8px',
+                      border: `1px solid ${scheme.border}`,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '4px'
+                    }}>
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px'
+                      }}>
+                        <span style={{
+                          background: scheme.badge,
+                          color: '#000',
+                          fontSize: '10px',
+                          fontWeight: 'bold',
+                          padding: '2px 6px',
+                          borderRadius: '4px',
+                          minWidth: '70px',
+                          textAlign: 'center'
+                        }}>
+                          {scheme.text}
+                        </span>
+                        <span style={{
+                          color: '#E0E0E0',
+                          fontSize: '13px',
+                          fontFamily: 'Courier New, monospace',
+                          wordBreak: 'break-all'
+                        }}>
+                          {link.url.length > 60
+                            ? link.url.substring(0, 60) + '...'
+                            : link.url}
+                        </span>
+                      </div>
+                      <span style={{
+                        color: '#6a88b8',
+                        fontSize: '12px',
+                        paddingLeft: '78px'
+                      }}>
+                        {link.top_reason}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
             )}
 
