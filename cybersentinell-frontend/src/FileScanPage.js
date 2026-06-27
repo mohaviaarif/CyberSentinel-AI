@@ -66,6 +66,8 @@ function VerdictBadge({ verdict, color }) {
     Suspicious: <FaExclamationTriangle />,
     Malicious:  <FaTimesCircle />,
     Unknown:    <FaFileAlt />,
+    Pending:    <FaUpload />,
+    "Upload Failed": <FaExclamationTriangle />,
     Error:      <FaExclamationTriangle />,
   };
   return (
@@ -264,6 +266,12 @@ function FileScanPage() {
       if (verdictLower === "clean")     { color = "#00E5A0"; }
       if (verdictLower === "suspicious"){ color = "#FFC947"; glowClass = "glow-warning"; }
       if (verdictLower === "malicious") { color = "#FF4C4C"; glowClass = "glow-danger"; }
+      if (verdictLower === "pending")   { color = "#2979FF"; }
+      if (verdictLower === "upload failed") { color = "#FF9800"; }
+
+      const message = verdictLower === "pending"
+        ? "File submitted for live analysis"
+        : (data.message ?? "");
 
       setResult({
         verdict:   verdictRaw,
@@ -273,7 +281,7 @@ function FileScanPage() {
         suspicious: data.suspicious_count ?? 0,
         total:     data.total_engines    ?? 0,
         hash:      data.sha256_hash      ?? "",
-        message:   data.message          ?? "",
+        message,
         flaggedBy: data.flagged_by       ?? [],
         fileDeleted: data.file_deleted   ?? false,
         filename:  selectedFile.name,
