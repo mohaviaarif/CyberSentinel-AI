@@ -140,9 +140,11 @@ function URLScanPage() {
     setResult(null);
 
     try {
+      const userEmail = localStorage.getItem("userEmail") || "";
       const response = await axios.post(
         "http://localhost:5000/api/url-scan",
-        { url: urlToSend }
+        { url: urlToSend },
+        { headers: { "X-User-Email": userEmail } }
       );
 
       const data = response.data;

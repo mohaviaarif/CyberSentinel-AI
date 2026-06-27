@@ -304,6 +304,12 @@ export function Sidebar({ collapsed, setCollapsed }) {
             label="Scan File"
             collapsed={collapsed}
           />
+          <NavItem
+            to="/history"
+            icon={<PageviewIcon fontSize="small" />}
+            label="Scan History"
+            collapsed={collapsed}
+          />
 
           {/* Info */}
           <SectionDivider label="Info" collapsed={collapsed} />

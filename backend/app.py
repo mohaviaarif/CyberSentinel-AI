@@ -83,6 +83,44 @@ def init_db():
             password_hash TEXT NOT NULL
         )
     """)
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS email_scans (
+            scan_id    INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_email TEXT,
+            input_summary TEXT,
+            prediction TEXT,
+            confidence REAL,
+            threats    TEXT,
+            links_found INTEGER DEFAULT 0,
+            scanned_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS url_scans (
+            scan_id    INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_email TEXT,
+            url_scanned TEXT,
+            result     TEXT,
+            score      INTEGER,
+            confidence REAL,
+            scanned_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS file_scans (
+            scan_id        INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_email     TEXT,
+            filename       TEXT,
+            sha256_hash    TEXT,
+            verdict        TEXT,
+            malicious_count INTEGER DEFAULT 0,
+            total_engines  INTEGER DEFAULT 0,
+            file_deleted   BOOLEAN DEFAULT 1,
+            scanned_at     DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
     conn.commit()
     conn.close()
 
@@ -192,6 +230,74 @@ def rate_limit_handler(error):
 def internal_error(error):
     app.logger.error("500 - Internal server error")
     return jsonify({"success": False, "error": "Something went wrong on the server."}), 500
+
+
+@app.route("/api/scan-history", methods=["GET"])
+def get_scan_history():
+    try:
+        db_path = os.path.join(
+            os.path.dirname(__file__), "users.db"
+        )
+        conn = sqlite3.connect(db_path)
+        conn.row_factory = sqlite3.Row
+
+        email_rows = conn.execute("""
+            SELECT 'email' as scan_type,
+                   scan_id,
+                   input_summary as summary,
+                   prediction as result,
+                   confidence,
+                   scanned_at
+            FROM email_scans
+            ORDER BY scanned_at DESC LIMIT 20
+        """).fetchall()
+
+        url_rows = conn.execute("""
+            SELECT 'url' as scan_type,
+                   scan_id,
+                   url_scanned as summary,
+                   result,
+                   confidence,
+                   scanned_at
+            FROM url_scans
+            ORDER BY scanned_at DESC LIMIT 20
+        """).fetchall()
+
+        file_rows = conn.execute("""
+            SELECT 'file' as scan_type,
+                   scan_id,
+                   filename as summary,
+                   verdict as result,
+                   NULL as confidence,
+                   scanned_at
+            FROM file_scans
+            ORDER BY scanned_at DESC LIMIT 20
+        """).fetchall()
+
+        conn.close()
+
+        all_scans = (
+            [dict(r) for r in email_rows] +
+            [dict(r) for r in url_rows] +
+            [dict(r) for r in file_rows]
+        )
+
+        all_scans.sort(
+            key=lambda x: x.get("scanned_at") or "",
+            reverse=True
+        )
+
+        return jsonify({
+            "success": True,
+            "scans": all_scans[:20]
+        }), 200
+
+    except Exception as e:
+        app.logger.error(f"Scan history error: {str(e)}")
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
 
 
 # ---------------------------------

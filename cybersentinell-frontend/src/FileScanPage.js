@@ -236,10 +236,16 @@ function FileScanPage() {
       const formData = new FormData();
       formData.append("file", selectedFile);
 
+      const userEmail = localStorage.getItem("userEmail") || "";
       const response = await axios.post(
         "http://localhost:5000/api/file-scan",
         formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            "X-User-Email": userEmail,
+          },
+        }
       );
 
       const data = response.data;

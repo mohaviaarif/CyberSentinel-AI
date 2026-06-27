@@ -22,6 +22,7 @@ import FAQPage from "./FAQPage";
 import ContactPage from "./ContactPage";
 import AnalyzePage from "./AnalyzePage";
 import URLScanPage from "./URLScanPage";
+import HistoryPage from "./HistoryPage";
 import FileScanPage from "./FileScanPage"; // ✅ NEW IMPORT
 
 // --- Auth Pages ---
@@ -327,6 +328,8 @@ function App() {
                     </RequireAuth>
                   }
                 />
+
+                <Route path="/history" element={<HistoryPage />} />
 
                 {/* Redirect Unknown Routes */}
                 <Route path="*" element={<Navigate to="/" replace />} />
