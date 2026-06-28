@@ -12,6 +12,9 @@ import {
 } from "react-icons/fa";
 import axios from "axios";
 
+const API_BASE = process.env.REACT_APP_API_URL
+  || "http://localhost:5000";
+
 // ─── Circular confidence meter (identical to AnalyzePage) ─────────────────────
 function ConfidenceRing({ value, color }) {
   const radius = 52;
@@ -142,7 +145,7 @@ function URLScanPage() {
     try {
       const userEmail = localStorage.getItem("userEmail") || "";
       const response = await axios.post(
-        "http://localhost:5000/api/url-scan",
+        `${API_BASE}/api/url-scan`,
         { url: urlToSend },
         { headers: { "X-User-Email": userEmail } }
       );

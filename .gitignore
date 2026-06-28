@@ -10,6 +10,13 @@ __pycache__/
 # Environment variables
 .env
 
+# Environment files
+.env.production
+.env.development
+.env.local
+cybersentinell-frontend/.env.production
+cybersentinell-frontend/.env.development
+
 # Database
 users.db
 *.db

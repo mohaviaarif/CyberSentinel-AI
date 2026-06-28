@@ -14,6 +14,9 @@ import {
 } from "react-icons/fa";
 import axios from "axios";
 
+const API_BASE = process.env.REACT_APP_API_URL
+  || "http://localhost:5000";
+
 // ─── Engine detection bar ─────────────────────────────────────────────────────
 function EngineBar({ malicious, total, color }) {
   const pct = total > 0 ? Math.round((malicious / total) * 100) : 0;
@@ -240,7 +243,7 @@ function FileScanPage() {
 
       const userEmail = localStorage.getItem("userEmail") || "";
       const response = await axios.post(
-        "http://localhost:5000/api/file-scan",
+        `${API_BASE}/api/file-scan`,
         formData,
         {
           headers: {

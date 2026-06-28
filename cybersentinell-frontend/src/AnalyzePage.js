@@ -12,6 +12,9 @@ import {
   FaLightbulb,
 } from "react-icons/fa";
 
+const API_BASE = process.env.REACT_APP_API_URL
+  || "http://localhost:5000";
+
 // ─── Circular confidence meter ────────────────────────────────────────────────
 function ConfidenceRing({ value, color }) {
   const radius = 52;
@@ -107,7 +110,7 @@ function AnalyzePage() {
 
     try {
       const userEmail = localStorage.getItem("userEmail") || "";
-      const response = await fetch("http://127.0.0.1:5000/predict", {
+      const response = await fetch(`${API_BASE}/predict`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

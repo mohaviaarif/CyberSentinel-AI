@@ -5,6 +5,9 @@ import SecurityIcon from "@mui/icons-material/Security";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
+const API_BASE = process.env.REACT_APP_API_URL
+  || "http://localhost:5000";
+
 function SignupPage() {
   const [form, setForm] = useState({
     email: "",
@@ -62,7 +65,7 @@ function SignupPage() {
     setLoading(true);
 
     try {
-      const res = await fetch("http://127.0.0.1:5000/auth/signup", {
+      const res = await fetch(`${API_BASE}/auth/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

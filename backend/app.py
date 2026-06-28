@@ -28,7 +28,10 @@ app.config["MAX_CONTENT_LENGTH"] = 32 * 1024 * 1024  # 32 MB
 # ---------------------------------
 # STEP 4: CORS — Only allow React frontend
 # ---------------------------------
-CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
+ALLOWED_ORIGINS = os.getenv(
+    "ALLOWED_ORIGIN", "http://localhost:3000"
+).split(",")
+CORS(app, resources={r"/*": {"origins": ALLOWED_ORIGINS}})
 
 
 # ---------------------------------
