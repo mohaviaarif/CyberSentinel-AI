@@ -139,6 +139,11 @@ def hash_password(pw):
     return hashlib.sha256(pw.encode("utf-8")).hexdigest()
 
 
+@app.route("/healthz", methods=["GET"])
+def health_check():
+    return jsonify({"status": "ok"}), 200
+
+
 @app.route("/auth/signup", methods=["POST"])
 def signup():
     data = request.get_json()
