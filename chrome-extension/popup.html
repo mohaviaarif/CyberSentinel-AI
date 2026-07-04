@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      width: 340px;
+      min-height: 200px;
+      margin: 0;
+      padding: 16px;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #0f1419 0%, #1a1f2e 100%);
+      color: #F2F6FF;
+    }
+    h2 {
+      font-size: 16px;
+      margin: 0 0 4px 0;
+      color: #F2F6FF;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .subtitle {
+      font-size: 11px;
+      color: #6a88b8;
+      margin-bottom: 16px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #2979FF 0%, #00BFAE 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    button:hover:not(:disabled) {
+      opacity: 0.9;
+    }
+    #result {
+      margin-top: 16px;
+      display: none;
+    }
+    .verdict-badge {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+    .safe { background: rgba(0,229,160,0.15); color: #00E5A0; border: 1px solid #00E5A0; }
+    .phishing { background: rgba(255,76,76,0.15); color: #FF4C4C; border: 1px solid #FF4C4C; }
+    .confidence {
+      font-size: 12px;
+      color: #A4C7EC;
+      margin-bottom: 10px;
+    }
+    .threat-item {
+      font-size: 12px;
+      color: #E0E0E0;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .status-text {
+      font-size: 12px;
+      color: #6a88b8;
+      text-align: center;
+      margin-top: 12px;
+    }
+    .error-text {
+      font-size: 12px;
+      color: #FF4C4C;
+      text-align: center;
+      margin-top: 12px;
+    }
+    .links-section {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    .link-item {
+      font-size: 11px;
+      padding: 6px 8px;
+      margin-bottom: 6px;
+      border-radius: 6px;
+      word-break: break-all;
+    }
+  </style>
+</head>
+<body>
+  <h2>🛡️ CyberSentinel AI</h2>
+  <div class="subtitle">Gmail Phishing Scanner</div>
+  <button id="scanBtn">Scan This Email</button>
+  <div id="statusText" class="status-text"></div>
+  <div id="result"></div>
+  <script src="popup.js"></script>
+</body>
+</html>

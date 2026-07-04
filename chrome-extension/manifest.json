@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "CyberSentinel AI - Gmail Scanner",
+  "version": "1.0.0",
+  "description": "Scan the currently open Gmail email for phishing threats using CyberSentinel AI",
+  "permissions": ["activeTab", "scripting"],
+  "host_permissions": [
+    "https://mail.google.com/*",
+    "https://cybersentinel-ai-backend.onrender.com/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icon.png",
+      "48": "icon.png",
+      "128": "icon.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://mail.google.com/*"],
+      "js": ["content.js"]
+    }
+  ]
+}
