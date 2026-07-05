@@ -23,6 +23,7 @@ import ContactPage from "./ContactPage";
 import AnalyzePage from "./AnalyzePage";
 import URLScanPage from "./URLScanPage";
 import HistoryPage from "./HistoryPage";
+import AdminPage from "./AdminPage";
 import FileScanPage from "./FileScanPage"; // ✅ NEW IMPORT
 
 // --- Auth Pages ---
@@ -330,6 +331,7 @@ function App() {
                 />
 
                 <Route path="/history" element={<HistoryPage />} />
+                <Route path="/admin" element={<AdminPage />} />
 
                 {/* Redirect Unknown Routes */}
                 <Route path="*" element={<Navigate to="/" replace />} />

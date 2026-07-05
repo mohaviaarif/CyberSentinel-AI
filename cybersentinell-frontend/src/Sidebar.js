@@ -155,6 +155,7 @@ function SectionDivider({ label, collapsed }) {
 
 // ─── Main Sidebar ─────────────────────────────────────────────────────────────
 export function Sidebar({ collapsed, setCollapsed }) {
+  const userEmail = localStorage.getItem("userEmail") || "";
 
   const handleLogout = () => {
     localStorage.removeItem("isLoggedIn");
@@ -310,6 +311,14 @@ export function Sidebar({ collapsed, setCollapsed }) {
             label="Scan History"
             collapsed={collapsed}
           />
+          {userEmail && (
+            <NavItem
+              to="/admin"
+              icon={<ShieldIcon fontSize="small" />}
+              label="Admin Panel"
+              collapsed={collapsed}
+            />
+          )}
 
           {/* Info */}
           <SectionDivider label="Info" collapsed={collapsed} />
