@@ -83,9 +83,21 @@ def init_db():
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             email TEXT UNIQUE NOT NULL,
-            password_hash TEXT NOT NULL
+            password_hash TEXT NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )
     """)
+    user_columns = {
+        row["name"]
+        for row in conn.execute("PRAGMA table_info(users)").fetchall()
+    }
+    if "created_at" not in user_columns:
+        conn.execute("ALTER TABLE users ADD COLUMN created_at DATETIME")
+        conn.execute("""
+            UPDATE users
+            SET created_at = CURRENT_TIMESTAMP
+            WHERE created_at IS NULL
+        """)
     conn.execute("""
         CREATE TABLE IF NOT EXISTS email_scans (
             scan_id    INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -156,7 +168,10 @@ def signup():
     try:
         conn = get_db()
         conn.execute(
-            "INSERT INTO users (email, password_hash) VALUES (?, ?)",
+            """
+            INSERT INTO users (email, password_hash, created_at)
+            VALUES (?, ?, CURRENT_TIMESTAMP)
+            """,
             (email, hash_password(password)),
         )
         conn.commit()
@@ -306,6 +321,272 @@ def get_scan_history():
             "success": False,
             "error": str(e)
         }), 500
+
+
+def is_admin(email):
+    """
+    Simple admin check - any email in the
+    ADMIN_EMAILS environment variable is an admin.
+    Falls back to hardcoded list if env not set.
+    """
+    admin_emails_env = os.getenv(
+        "ADMIN_EMAILS",
+        "admin@cybersentinel.com,mohavia@cybersentinel.com"
+    )
+    admin_list = [
+        admin_email.strip().lower()
+        for admin_email in admin_emails_env.split(",")
+    ]
+    return email.lower() in admin_list
+
+
+@app.route("/api/admin/stats", methods=["GET"])
+def admin_stats():
+    """
+    Returns system-wide statistics for admin panel.
+    Protected by X-User-Email header check.
+    """
+    try:
+        user_email = request.headers.get(
+            "X-User-Email", ""
+        )
+        if not is_admin(user_email):
+            return jsonify({
+                "success": False,
+                "error": "Unauthorized"
+            }), 403
+
+        db_path = os.path.join(
+            os.path.dirname(__file__), "users.db"
+        )
+        conn = sqlite3.connect(db_path)
+        conn.row_factory = sqlite3.Row
+
+        total_users = conn.execute(
+            "SELECT COUNT(*) as count FROM users"
+        ).fetchone()["count"]
+
+        total_email_scans = conn.execute(
+            "SELECT COUNT(*) as count FROM email_scans"
+        ).fetchone()["count"]
+
+        total_url_scans = conn.execute(
+            "SELECT COUNT(*) as count FROM url_scans"
+        ).fetchone()["count"]
+
+        total_file_scans = conn.execute(
+            "SELECT COUNT(*) as count FROM file_scans"
+        ).fetchone()["count"]
+
+        phishing_detected = conn.execute("""
+            SELECT COUNT(*) as count FROM email_scans
+            WHERE prediction = 'spam'
+        """).fetchone()["count"]
+
+        malicious_urls = conn.execute("""
+            SELECT COUNT(*) as count FROM url_scans
+            WHERE result = 'malicious'
+        """).fetchone()["count"]
+
+        malicious_files = conn.execute("""
+            SELECT COUNT(*) as count FROM file_scans
+            WHERE verdict = 'Malicious'
+        """).fetchone()["count"]
+
+        recent_scans = conn.execute("""
+            SELECT 'email' as type,
+                   prediction as result,
+                   scanned_at
+            FROM email_scans
+            UNION ALL
+            SELECT 'url' as type,
+                   result,
+                   scanned_at
+            FROM url_scans
+            UNION ALL
+            SELECT 'file' as type,
+                   verdict as result,
+                   scanned_at
+            FROM file_scans
+            ORDER BY scanned_at DESC
+            LIMIT 5
+        """).fetchall()
+
+        conn.close()
+
+        return jsonify({
+            "success": True,
+            "stats": {
+                "total_users": total_users,
+                "total_email_scans": total_email_scans,
+                "total_url_scans": total_url_scans,
+                "total_file_scans": total_file_scans,
+                "total_scans": (
+                    total_email_scans +
+                    total_url_scans +
+                    total_file_scans
+                ),
+                "threats_detected": (
+                    phishing_detected +
+                    malicious_urls +
+                    malicious_files
+                ),
+                "phishing_detected": phishing_detected,
+                "malicious_urls": malicious_urls,
+                "malicious_files": malicious_files
+            },
+            "recent_activity": [dict(row) for row in recent_scans]
+        }), 200
+
+    except Exception as error:
+        return jsonify({
+            "success": False,
+            "error": str(error)
+        }), 500
+
+
+@app.route("/api/admin/users", methods=["GET"])
+def admin_users():
+    """
+    Returns list of all registered users.
+    Protected by admin check.
+    """
+    try:
+        user_email = request.headers.get(
+            "X-User-Email", ""
+        )
+        if not is_admin(user_email):
+            return jsonify({
+                "success": False,
+                "error": "Unauthorized"
+            }), 403
+
+        db_path = os.path.join(
+            os.path.dirname(__file__), "users.db"
+        )
+        conn = sqlite3.connect(db_path)
+        conn.row_factory = sqlite3.Row
+
+        users = conn.execute("""
+            SELECT
+                u.email,
+                u.created_at,
+                COUNT(DISTINCT es.scan_id) as email_scans,
+                COUNT(DISTINCT us.scan_id) as url_scans,
+                COUNT(DISTINCT fs.scan_id) as file_scans
+            FROM users u
+            LEFT JOIN email_scans es ON es.user_email = u.email
+            LEFT JOIN url_scans us ON us.user_email = u.email
+            LEFT JOIN file_scans fs ON fs.user_email = u.email
+            GROUP BY u.email, u.created_at
+            ORDER BY u.created_at DESC
+        """).fetchall()
+
+        conn.close()
+
+        return jsonify({
+            "success": True,
+            "users": [dict(user) for user in users]
+        }), 200
+
+    except Exception as error:
+        return jsonify({
+            "success": False,
+            "error": str(error)
+        }), 500
+
+
+@app.route("/api/admin/scans", methods=["GET"])
+def admin_scans():
+    """
+    Returns all recent scans across all modules.
+    Protected by admin check.
+    """
+    try:
+        user_email = request.headers.get(
+            "X-User-Email", ""
+        )
+        if not is_admin(user_email):
+            return jsonify({
+                "success": False,
+                "error": "Unauthorized"
+            }), 403
+
+        db_path = os.path.join(
+            os.path.dirname(__file__), "users.db"
+        )
+        conn = sqlite3.connect(db_path)
+        conn.row_factory = sqlite3.Row
+
+        email_rows = conn.execute("""
+            SELECT 'email' as scan_type,
+                   user_email,
+                   input_summary as summary,
+                   prediction as result,
+                   confidence,
+                   scanned_at
+            FROM email_scans
+            ORDER BY scanned_at DESC LIMIT 50
+        """).fetchall()
+
+        url_rows = conn.execute("""
+            SELECT 'url' as scan_type,
+                   user_email,
+                   url_scanned as summary,
+                   result,
+                   confidence,
+                   scanned_at
+            FROM url_scans
+            ORDER BY scanned_at DESC LIMIT 50
+        """).fetchall()
+
+        file_rows = conn.execute("""
+            SELECT 'file' as scan_type,
+                   user_email,
+                   filename as summary,
+                   verdict as result,
+                   NULL as confidence,
+                   scanned_at
+            FROM file_scans
+            ORDER BY scanned_at DESC LIMIT 50
+        """).fetchall()
+
+        conn.close()
+
+        all_scans = (
+            [dict(row) for row in email_rows] +
+            [dict(row) for row in url_rows] +
+            [dict(row) for row in file_rows]
+        )
+
+        all_scans.sort(
+            key=lambda scan: scan.get("scanned_at") or "",
+            reverse=True
+        )
+
+        return jsonify({
+            "success": True,
+            "scans": all_scans[:50]
+        }), 200
+
+    except Exception as error:
+        return jsonify({
+            "success": False,
+            "error": str(error)
+        }), 500
+
+
+@app.route("/api/admin/check", methods=["GET"])
+def admin_check():
+    """
+    Simple endpoint to check if current user is admin.
+    Frontend uses this to show/hide admin link.
+    """
+    user_email = request.headers.get("X-User-Email", "")
+    return jsonify({
+        "success": True,
+        "is_admin": is_admin(user_email)
+    }), 200
 
 
 # ---------------------------------
