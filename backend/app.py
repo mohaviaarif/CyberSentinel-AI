@@ -589,6 +589,90 @@ def admin_check():
     }), 200
 
 
+@app.route("/api/stats", methods=["GET"])
+def public_stats():
+    """
+    Returns real-time system statistics for
+    the public dashboard. No auth required.
+    """
+    try:
+        db_path = os.path.join(
+            os.path.dirname(__file__), "users.db"
+        )
+        conn = sqlite3.connect(db_path)
+        conn.row_factory = sqlite3.Row
+
+        total_email_scans = conn.execute(
+            "SELECT COUNT(*) as c FROM email_scans"
+        ).fetchone()["c"]
+
+        total_url_scans = conn.execute(
+            "SELECT COUNT(*) as c FROM url_scans"
+        ).fetchone()["c"]
+
+        total_file_scans = conn.execute(
+            "SELECT COUNT(*) as c FROM file_scans"
+        ).fetchone()["c"]
+
+        phishing_detected = conn.execute("""
+            SELECT COUNT(*) as c FROM email_scans
+            WHERE prediction = 'spam'
+        """).fetchone()["c"]
+
+        malicious_urls = conn.execute("""
+            SELECT COUNT(*) as c FROM url_scans
+            WHERE result = 'malicious'
+        """).fetchone()["c"]
+
+        malicious_files = conn.execute("""
+            SELECT COUNT(*) as c FROM file_scans
+            WHERE verdict = 'Malicious'
+        """).fetchone()["c"]
+
+        total_users = conn.execute(
+            "SELECT COUNT(*) as c FROM users"
+        ).fetchone()["c"]
+
+        conn.close()
+
+        total_scans = (
+            total_email_scans +
+            total_url_scans +
+            total_file_scans
+        )
+
+        threats_detected = (
+            phishing_detected +
+            malicious_urls +
+            malicious_files
+        )
+
+        return jsonify({
+            "success": True,
+            "total_scans": total_scans,
+            "threats_detected": threats_detected,
+            "total_email_scans": total_email_scans,
+            "total_url_scans": total_url_scans,
+            "total_file_scans": total_file_scans,
+            "total_users": total_users,
+            "phishing_detected": phishing_detected,
+            "malicious_urls": malicious_urls,
+            "malicious_files": malicious_files
+        }), 200
+
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "error": str(e),
+            "total_scans": 0,
+            "threats_detected": 0,
+            "total_email_scans": 0,
+            "total_url_scans": 0,
+            "total_file_scans": 0,
+            "total_users": 0
+        }), 200
+
+
 # ---------------------------------
 # Run App
 # ---------------------------------
