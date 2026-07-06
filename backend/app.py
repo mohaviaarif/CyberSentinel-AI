@@ -177,6 +177,15 @@ def signup():
         conn.commit()
         conn.close()
 
+        try:
+            from services.notification_service \
+                import send_welcome_email
+            send_welcome_email(email)
+        except Exception as welcome_err:
+            app.logger.error(
+                f"Welcome email failed: {welcome_err}"
+            )
+
         return jsonify({"success": True, "message": "Signup successful!"})
 
     except Exception:

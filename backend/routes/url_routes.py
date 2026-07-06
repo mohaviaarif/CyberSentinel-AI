@@ -84,6 +84,28 @@ def scan_url():
                 f"Failed to save URL scan: {db_err}"
             )
 
+        # Send threat alert if malicious URL detected
+        try:
+            scan_result_val = result.get("result", "")
+            scan_confidence = result.get("confidence", 0.0)
+            if (scan_result_val == "malicious"
+                    and scan_confidence > 0.6):
+                from services.notification_service \
+                    import send_threat_alert
+                send_threat_alert(
+                    to_email=user_email,
+                    threat_type="Malicious URL",
+                    threat_summary=url,
+                    confidence=scan_confidence,
+                    threats=result.get(
+                        "threat_indicators", []
+                    )[:3]
+                )
+        except Exception as notif_err:
+            current_app.logger.error(
+                f"URL notification failed: {notif_err}"
+            )
+
         return jsonify(result), 200
 
     except Exception as e:

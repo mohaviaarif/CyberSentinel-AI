@@ -97,6 +97,27 @@ def predict():
                 f"Failed to save email scan: {db_err}"
             )
 
+        # Send threat alert if phishing detected
+        try:
+            if label == "spam" and confidence > 0.7:
+                from services.notification_service \
+                    import send_threat_alert
+                send_threat_alert(
+                    to_email=user_email,
+                    threat_type="Phishing Email",
+                    threat_summary=(
+                        text[:150] + "..."
+                        if len(text) > 150
+                        else text
+                    ),
+                    confidence=confidence,
+                    threats=threats[:3]
+                )
+        except Exception as notif_err:
+            current_app.logger.error(
+                f"Notification failed: {notif_err}"
+            )
+
         return jsonify({
             "prediction": label,
             "confidence": confidence,
