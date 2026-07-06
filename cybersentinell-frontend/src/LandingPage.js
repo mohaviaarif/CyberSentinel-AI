@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import PageTransition from "./animations/PageTransition";
 import {
   FadeIn,
@@ -21,19 +22,8 @@ import {
   FaTimesCircle,
 } from "react-icons/fa";
 
-// ─── Helper: animate a number from 0 to target ───────────────────────────────
-function animateNumber(target, setter, duration = 1200) {
-  if (target === 0) { setter(0); return; }
-  const steps = 40;
-  const increment = target / steps;
-  const delay = duration / steps;
-  let current = 0;
-  const interval = setInterval(() => {
-    current += increment;
-    if (current >= target) { current = target; clearInterval(interval); }
-    setter(parseFloat(current.toFixed(1)));
-  }, delay);
-}
+const API_BASE = process.env.REACT_APP_API_URL
+  || "http://localhost:5000";
 
 // ─── Pulsing live indicator dot ──────────────────────────────────────────────
 function LiveDot() {
@@ -140,21 +130,39 @@ export function LandingPage() {
   const navigate = useNavigate();
 
   // Stats
-  const [emailCount, setEmailCount] = useState(0);
-  const [threats,    setThreats]    = useState(0);
-  const [accuracy]                  = useState("~97%");
-  const [speed]                     = useState("0.008s");
+  const [emailCount,  setEmailCount]  = useState(0);
+  const [threatCount, setThreatCount] = useState(0);
+  const [urlCount,    setUrlCount]    = useState(0);
+  const [fileCount,   setFileCount]   = useState(0);
+  const [userCount,   setUserCount]   = useState(0);
+  const [accuracy]                     = useState("~97%");
+  const [speed]                        = useState("0.008s");
 
   // Live feed
   const [feedIndex, setFeedIndex] = useState(0);
   const [feedVisible, setFeedVisible] = useState(true);
 
-  // Load email count from localStorage and animate on mount
+  // Load real system statistics and refresh every 30 seconds
   useEffect(() => {
-    const saved = parseInt(localStorage.getItem("emailAnalyzedCount") || "0", 10);
-    const savedThreats = parseInt(localStorage.getItem("threatsDetected") || "0", 10);
-    animateNumber(saved, setEmailCount);
-    animateNumber(savedThreats, setThreats);
+    const fetchStats = async () => {
+      try {
+        const res = await axios.get(
+          `${API_BASE}/api/stats`
+        );
+        if (res.data.success) {
+          setEmailCount(res.data.total_email_scans);
+          setThreatCount(res.data.threats_detected);
+          setUrlCount(res.data.total_url_scans);
+          setFileCount(res.data.total_file_scans);
+          setUserCount(res.data.total_users);
+        }
+      } catch (err) {
+        console.log("Stats fetch failed:", err);
+      }
+    };
+    fetchStats();
+    const interval = setInterval(fetchStats, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   // Cycle through feed events with fade
@@ -166,17 +174,6 @@ export function LandingPage() {
         setFeedVisible(true);
       }, 350);
     }, 3200);
-    return () => clearInterval(interval);
-  }, []);
-
-  // Refresh stats every 3 seconds (picks up new scans)
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const saved = parseInt(localStorage.getItem("emailAnalyzedCount") || "0", 10);
-      const savedThreats = parseInt(localStorage.getItem("threatsDetected") || "0", 10);
-      setEmailCount(saved);
-      setThreats(savedThreats);
-    }, 3000);
     return () => clearInterval(interval);
   }, []);
 
@@ -380,9 +377,13 @@ export function LandingPage() {
 
           {/* ── STATS ───────────────────────────────────────────── */}
           <FadeIn delay={0.5}>
-            <div className="stat-grid" style={{ marginBottom: 48 }}>
-              <StatCard icon={<FaInbox />}  value={emailCount || "—"} label="Emails Analyzed"  color="#00d4ff" />
-              <StatCard icon={<FaBug />}    value={threats || "—"}    label="Threats Detected" color="#ff4444" />
+            <div
+              className="stat-grid"
+              aria-label={`System statistics: ${emailCount} email scans, ${urlCount} URL scans, ${fileCount} file scans, ${userCount} users`}
+              style={{ marginBottom: 48 }}
+            >
+              <StatCard icon={<FaInbox />}  value={emailCount}  label="Emails Analyzed"  color="#00d4ff" />
+              <StatCard icon={<FaBug />}    value={threatCount} label="Threats Detected" color="#ff4444" />
               <StatCard icon={<FaBrain />}  value={accuracy}          label="Model Accuracy"   color="#00ff88" />
               <StatCard icon={<FaBolt />}   value={speed}             label="Avg Scan Speed"   color="#ffaa00" />
             </div>

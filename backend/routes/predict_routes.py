@@ -192,3 +192,203 @@ def scan_email_file():
             "success": False,
             "error": "Analysis failed. Please try again."
         }), 500
+
+
+@predict_bp.route("/api/scan-document", methods=["POST"])
+@limiter.limit("10 per minute")
+def scan_document():
+    """
+    Accepts PDF and Word documents.
+    Extracts text from them and runs through
+    the phishing detection pipeline.
+    Supports: .pdf, .docx, .doc
+    """
+    try:
+        if "file" not in request.files:
+            return jsonify({
+                "success": False,
+                "error": "No file provided."
+            }), 400
+
+        uploaded_file = request.files["file"]
+
+        if not uploaded_file.filename:
+            return jsonify({
+                "success": False,
+                "error": "No file selected."
+            }), 400
+
+        filename = uploaded_file.filename
+        file_ext = os.path.splitext(filename)[1].lower()
+
+        allowed_extensions = [".pdf", ".docx", ".doc"]
+        if file_ext not in allowed_extensions:
+            return jsonify({
+                "success": False,
+                "error": (
+                    "Only PDF and Word documents are "
+                    "supported. Use .pdf or .docx files."
+                )
+            }), 415
+
+        file_bytes = uploaded_file.read()
+
+        if len(file_bytes) == 0:
+            return jsonify({
+                "success": False,
+                "error": "The uploaded file is empty."
+            }), 400
+
+        if len(file_bytes) > 10 * 1024 * 1024:
+            return jsonify({
+                "success": False,
+                "error": "File too large. Maximum 10MB."
+            }), 413
+
+        # Extract text based on file type
+        extracted_text = ""
+        extraction_method = ""
+
+        if file_ext == ".pdf":
+            try:
+                import pypdf2 as PyPDF2
+                import io
+                pdf_reader = PyPDF2.PdfReader(
+                    io.BytesIO(file_bytes)
+                )
+                pages_text = []
+                for page in pdf_reader.pages:
+                    text = page.extract_text()
+                    if text:
+                        pages_text.append(text)
+                extracted_text = "\n".join(pages_text)
+                extraction_method = "PDF"
+            except ImportError:
+                try:
+                    import PyPDF2
+                    import io
+                    pdf_reader = PyPDF2.PdfReader(
+                        io.BytesIO(file_bytes)
+                    )
+                    pages_text = []
+                    for page in pdf_reader.pages:
+                        text = page.extract_text()
+                        if text:
+                            pages_text.append(text)
+                    extracted_text = "\n".join(pages_text)
+                    extraction_method = "PDF"
+                except Exception as pdf_err:
+                    return jsonify({
+                        "success": False,
+                        "error": (
+                            f"Could not read PDF: {str(pdf_err)}"
+                        )
+                    }), 500
+
+        elif file_ext in [".docx", ".doc"]:
+            try:
+                import docx
+                import io
+                doc = docx.Document(io.BytesIO(file_bytes))
+                paragraphs = [
+                    paragraph.text for paragraph in doc.paragraphs
+                    if paragraph.text.strip()
+                ]
+                extracted_text = "\n".join(paragraphs)
+                extraction_method = "Word"
+            except Exception as docx_err:
+                return jsonify({
+                    "success": False,
+                    "error": (
+                        f"Could not read Word document: "
+                        f"{str(docx_err)}"
+                    )
+                }), 500
+
+        extracted_text = extracted_text.strip()
+
+        if not extracted_text or len(extracted_text) < 10:
+            return jsonify({
+                "success": False,
+                "error": (
+                    f"Could not extract readable text from "
+                    f"this {extraction_method} file. "
+                    f"The file may be image-based or empty."
+                )
+            }), 400
+
+        current_app.logger.info(
+            f"Document scan: {filename} | "
+            f"type={extraction_method} | "
+            f"chars={len(extracted_text)}"
+        )
+
+        # Run through existing phishing detection pipeline
+        result = predict_email(extracted_text[:5000])
+
+        user_email = request.headers.get(
+            "X-User-Email", "anonymous"
+        )
+
+        # Save to database
+        try:
+            db_path = os.path.join(
+                os.path.dirname(
+                    os.path.dirname(__file__)
+                ),
+                "users.db"
+            )
+            conn = sqlite3.connect(db_path)
+            input_summary = (
+                f"[{extraction_method}] {filename}: " +
+                extracted_text[:80] + "..."
+            )
+            conn.execute("""
+                INSERT INTO email_scans
+                (user_email, input_summary, prediction,
+                 confidence, threats, links_found)
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, (
+                user_email,
+                input_summary,
+                result["prediction"],
+                result["confidence"],
+                str(result.get("threats", [])),
+                len(result.get("embedded_links", []))
+            ))
+            conn.commit()
+            conn.close()
+        except Exception as db_err:
+            current_app.logger.error(
+                f"DB save failed: {db_err}"
+            )
+
+        current_app.logger.info(
+            f"Document scan complete: {filename} | "
+            f"prediction={result['prediction']} | "
+            f"confidence={result['confidence']}"
+        )
+
+        return jsonify({
+            "success": True,
+            "source": "document_upload",
+            "filename": filename,
+            "extraction_method": extraction_method,
+            "extracted_chars": len(extracted_text),
+            "prediction": result["prediction"],
+            "confidence": result["confidence"],
+            "threats": result.get("threats", []),
+            "tips": result.get("tips", []),
+            "embedded_links": result.get(
+                "embedded_links", []
+            )
+        }), 200
+
+    except Exception as e:
+        current_app.logger.error(
+            f"Document scan error: {str(e)}"
+        )
+        return jsonify({
+            "success": False,
+            "error": "Scan failed. Please try again."
+        }), 500

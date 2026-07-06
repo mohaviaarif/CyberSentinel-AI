@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react";
+import axios from "axios";
 import {
   FaCheck,
   FaBug,
@@ -93,10 +94,12 @@ function AnalyzePage() {
   const [loading, setLoading]           = useState(false);
   const [error, setError]               = useState("");
   const [loadedFileName, setLoadedFileName] = useState("");
+  const [docFileName, setDocFileName]   = useState("");
   const [charCount, setCharCount]       = useState(0);
   const [focused, setFocused]           = useState(false);
 
   const fileInputRef = useRef();
+  const docInputRef = useRef();
 
   // ── Analyze handler ────────────────────────────────────────────────────────
   const handleAnalyze = async () => {
@@ -171,9 +174,11 @@ function AnalyzePage() {
     setEmailContent("");
     setResult(null);
     setLoadedFileName("");
+    setDocFileName("");
     setError("");
     setCharCount(0);
     if (fileInputRef.current) fileInputRef.current.value = "";
+    if (docInputRef.current) docInputRef.current.value = "";
   };
 
   // ── File upload handler ────────────────────────────────────────────────────
@@ -191,6 +196,71 @@ function AnalyzePage() {
     reader.readAsText(file);
     // Allow re-selecting same file
     if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const handleDocumentUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setDocFileName(file.name);
+    setResult(null);
+    setError("");
+    setLoading(true);
+
+    try {
+      const userEmail = localStorage.getItem(
+        "userEmail"
+      ) || "";
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await axios.post(
+        `${API_BASE}/api/scan-document`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            "X-User-Email": userEmail
+          }
+        }
+      );
+
+      const data = response.data;
+      const isPhishing = data.prediction === "spam";
+
+      setResult({
+        verdict: isPhishing ? "Phishing" : "Safe",
+        confidence: Math.round((data.confidence || 0) * 100),
+        riskLevel: isPhishing ? "High" : "Low",
+        color: isPhishing ? "#FF4C4C" : "#00E5A0",
+        glowClass: isPhishing ? "glow-danger" : "glow-safe",
+        threats: data.threats || [],
+        safetyTips: data.tips || [],
+        embedded_links: data.embedded_links || [],
+        source: `${data.extraction_method} Document`,
+        filename: data.filename,
+        extractedChars: data.extracted_chars
+      });
+
+    } catch (err) {
+      if (err.response) {
+        setError(
+          err.response.data?.error ||
+          "Document scan failed."
+        );
+      } else {
+        setError(
+          "Cannot reach server. " +
+          "Make sure backend is running."
+        );
+      }
+    } finally {
+      setLoading(false);
+      setDocFileName("");
+      if (docInputRef.current) {
+        docInputRef.current.value = "";
+      }
+    }
   };
 
   // ── PDF download ───────────────────────────────────────────────────────────
@@ -373,6 +443,23 @@ function AnalyzePage() {
             Upload .txt or .eml file
           </button>
 
+          <button
+            onClick={() => docInputRef.current.click()}
+            title={docFileName || "Scan PDF or Word document"}
+            style={{
+              background: "rgba(156,39,176,0.15)",
+              border: "1px solid #9C27B0",
+              color: "#9C27B0",
+              borderRadius: "20px",
+              padding: "6px 14px",
+              fontSize: "12px",
+              cursor: "pointer",
+              fontWeight: "600"
+            }}
+          >
+            📄 Scan PDF or Word Doc
+          </button>
+
           {loadedFileName && (
             <div style={{
               display: "flex", alignItems: "center", gap: 8,
@@ -401,6 +488,13 @@ function AnalyzePage() {
             accept=".txt,.eml"
             style={{ display: "none" }}
             onChange={handleFileUpload}
+          />
+          <input
+            type="file"
+            ref={docInputRef}
+            style={{ display: "none" }}
+            accept=".pdf,.docx,.doc"
+            onChange={handleDocumentUpload}
           />
         </div>
 
@@ -492,6 +586,15 @@ function AnalyzePage() {
               borderBottom: "1px solid rgba(255,255,255,0.06)",
             }}>
               <div>
+                {result.source && result.source.includes("Document") && (
+                  <div style={{
+                    marginBottom: 10,
+                    color: "#6a88b8",
+                    fontSize: "0.8em"
+                  }}>
+                    Extracted from: {result.filename} ({result.extractedChars} characters)
+                  </div>
+                )}
                 <VerdictBadge verdict={result.verdict} color={result.color} />
                 <div style={{ marginTop: 10, color: "#5a7a95", fontSize: "0.85em" }}>
                   Risk Level:&nbsp;
