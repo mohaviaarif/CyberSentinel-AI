@@ -177,6 +177,22 @@ def scan_email_file():
         except UnicodeDecodeError:
             email_text = file_content.decode("latin-1", errors="ignore")
 
+        # Tier 2: Extract hidden links from raw email HTML
+        hidden_links = []
+        try:
+            from utils.url_inspector import extract_hidden_links
+            raw_content = file_content.decode(
+                "utf-8", errors="ignore"
+            )
+            hidden_links = extract_hidden_links(raw_content)
+            current_app.logger.info(
+                f"Hidden links found: {len(hidden_links)} in {filename}"
+            )
+        except Exception as hl_err:
+            current_app.logger.error(
+                f"Hidden link extraction failed: {hl_err}"
+            )
+
         email_text = email_text.strip()
 
         if not email_text:
@@ -248,7 +264,8 @@ def scan_email_file():
             "confidence": result["confidence"],
             "threats": result.get("threats", []),
             "tips": result.get("tips", []),
-            "embedded_links": result.get("embedded_links", [])
+            "embedded_links": result.get("embedded_links", []),
+            "hidden_links": hidden_links
         }), 200
 
     except Exception as e:

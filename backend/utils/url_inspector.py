@@ -215,3 +215,151 @@ def analyze_single_url(url: str) -> dict:
         "features": features,
         "reasoning": reasoning  # ✅ ADDED
     }
+
+
+def extract_hidden_links(email_raw: str) -> list:
+    """
+    Tier 2 hidden link detection.
+    Parses raw email content (HTML or plain text)
+    to find hyperlinks where:
+    - The visible display text looks safe or trustworthy
+    - The real href destination is different and potentially malicious
+
+    Returns dictionaries describing deceptive or risky link destinations.
+    """
+    from html import unescape
+    from urllib.parse import parse_qs, unquote
+
+    if not email_raw or not isinstance(email_raw, str):
+        return []
+
+    anchor_pattern = re.compile(
+        r'<a[^>]+href=["\']([^"\']+)["\'][^>]*>'
+        r'(.*?)</a>',
+        re.IGNORECASE | re.DOTALL
+    )
+
+    trusted_domains = {
+        "google.com", "gmail.com", "microsoft.com",
+        "outlook.com", "apple.com", "amazon.com",
+        "paypal.com", "facebook.com", "instagram.com",
+        "jazzcash.com.pk", "easypaisa.com.pk",
+        "hbl.com", "ubl.com.pk", "meezan.com",
+        "nadra.gov.pk", "pta.gov.pk", "fbr.gov.pk",
+        "bisp.gov.pk", "comsats.edu.pk",
+        "bankislami.com.pk", "alfalahbank.com"
+    }
+
+    def normalize_domain(value):
+        try:
+            return (urlparse(value).hostname or "").lower()
+        except (TypeError, ValueError):
+            return ""
+
+    def domain_matches(domain, trusted):
+        return domain == trusted or domain.endswith("." + trusted)
+
+    def unwrap_safelink(url):
+        try:
+            parsed = urlparse(url)
+            if not parsed.hostname or not parsed.hostname.lower().endswith(
+                    "safelinks.protection.outlook.com"):
+                return url
+            wrapped = parse_qs(parsed.query).get("url", [])
+            return unquote(wrapped[0]) if wrapped else url
+        except (TypeError, ValueError):
+            return url
+
+    hidden_links = []
+    seen_urls = set()
+
+    for href, display_html in anchor_pattern.findall(email_raw):
+        display_text = unescape(
+            re.sub(r'<[^>]+>', '', display_html)
+        ).strip()
+        href = unescape(href).strip()
+
+        if not href.lower().startswith(("http://", "https://")):
+            continue
+
+        href = unwrap_safelink(href)
+        if len(href) > 500 or href in seen_urls:
+            continue
+        seen_urls.add(href)
+
+        real_domain = normalize_domain(href)
+        if not real_domain:
+            continue
+
+        real_is_trusted = any(
+            domain_matches(real_domain, trusted)
+            for trusted in trusted_domains
+        )
+
+        mismatch = False
+        impersonated = ""
+        display_lower = display_text.lower()
+
+        for trusted in trusted_domains:
+            trusted_name = trusted.split(".")[0]
+            if (trusted in display_lower or trusted_name in display_lower) \
+                    and not domain_matches(real_domain, trusted):
+                mismatch = True
+                impersonated = trusted
+                break
+
+        display_url_match = re.search(
+            r'https?://[^\s<>"\']+',
+            display_text,
+            re.IGNORECASE
+        )
+        if display_url_match:
+            display_domain = normalize_domain(display_url_match.group(0))
+            if display_domain and display_domain != real_domain:
+                mismatch = True
+
+        # A legitimate destination on the named trusted domain is not a
+        # hidden-link threat merely because its path contains words such as
+        # "login" or "account".
+        if real_is_trusted and not mismatch:
+            continue
+
+        try:
+            url_result = analyze_single_url(href)
+            risk_level = url_result.get("risk_level", "safe")
+            score = url_result.get("score", 0)
+        except Exception:
+            risk_level = "unknown"
+            score = 0
+
+        if mismatch or risk_level in ("suspicious", "malicious"):
+            if mismatch and impersonated:
+                reason = (
+                    f"Display text mentions '{impersonated}' but real "
+                    f"link goes to '{real_domain}'"
+                )
+            elif mismatch:
+                reason = (
+                    "Display URL differs from real destination "
+                    f"'{real_domain}'"
+                )
+            else:
+                reason = (
+                    f"Link destination is {risk_level} (score: {score})"
+                )
+
+            hidden_links.append({
+                "display_text": (
+                    display_text[:80] + "..."
+                    if len(display_text) > 80
+                    else display_text
+                ),
+                "real_url": href[:200],
+                "real_domain": real_domain,
+                "mismatch": mismatch,
+                "risk_level": risk_level,
+                "score": score,
+                "reason": reason
+            })
+
+    return hidden_links
