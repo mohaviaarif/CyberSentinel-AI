@@ -717,6 +717,62 @@ def public_stats():
         }), 200
 
 
+@app.route("/api/extract-hidden-links", methods=["POST"])
+def extract_hidden_links_endpoint():
+    """
+    Accepts raw HTML from the Chrome extension and
+    returns hidden or deceptive links found inside it.
+    """
+    try:
+        data = request.get_json(silent=True)
+        if not isinstance(data, dict) or "html" not in data:
+            return jsonify({
+                "success": False,
+                "hidden_links": [],
+                "error": "No HTML provided"
+            }), 400
+
+        raw_html = data["html"]
+        if not isinstance(raw_html, str):
+            return jsonify({
+                "success": False,
+                "hidden_links": [],
+                "error": "HTML must be a string"
+            }), 400
+
+        if len(raw_html) < 10:
+            return jsonify({
+                "success": True,
+                "hidden_links": [],
+                "total_found": 0
+            }), 200
+
+        from utils.url_inspector import extract_hidden_links
+
+        hidden_links = extract_hidden_links(raw_html[:10000])
+
+        app.logger.info(
+            "Hidden link extraction: "
+            f"{len(hidden_links)} deceptive links found"
+        )
+
+        return jsonify({
+            "success": True,
+            "hidden_links": hidden_links,
+            "total_found": len(hidden_links)
+        }), 200
+
+    except Exception as e:
+        app.logger.error(
+            f"Hidden link endpoint error: {str(e)}"
+        )
+        return jsonify({
+            "success": True,
+            "hidden_links": [],
+            "total_found": 0
+        }), 200
+
+
 # ---------------------------------
 # Run App
 # ---------------------------------
