@@ -161,6 +161,7 @@ function AnalyzePage() {
         threats: data.threats || [],
         safetyTips: data.tips || [],
         embedded_links: data.embedded_links || [],
+        hidden_links: data.hidden_links || [],
       });
 
     } catch {
@@ -182,20 +183,86 @@ function AnalyzePage() {
   };
 
   // ── File upload handler ────────────────────────────────────────────────────
-  const handleFileUpload = (e) => {
+  const handleFileUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
+
+    setLoadedFileName(file.name);
+    setResult(null);
+    setError("");
+    setLoading(true);
+
     const reader = new FileReader();
     reader.onload = (ev) => {
       setEmailContent(ev.target.result);
       setCharCount(ev.target.result.length);
-      setLoadedFileName(file.name);
-      setResult(null);
-      setError("");
     };
     reader.readAsText(file);
-    // Allow re-selecting same file
-    if (fileInputRef.current) fileInputRef.current.value = "";
+
+    try {
+      const userEmail = localStorage.getItem("userEmail") || "";
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await axios.post(
+        `${API_BASE}/api/phish-file`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            "X-User-Email": userEmail
+          }
+        }
+      );
+
+      const data = response.data;
+      const confidence = Math.round((data.confidence || 0) * 100);
+      let verdict = "Safe";
+      let riskLevel = "Low";
+      let color = "#00E5A0";
+      let glowClass = "glow-safe";
+
+      if (data.prediction === "suspicious") {
+        verdict = "Suspicious";
+        riskLevel = "Medium";
+        color = "#FFC947";
+        glowClass = "glow-warning";
+      } else if (data.prediction === "spam") {
+        verdict = "Phishing";
+        riskLevel = "High";
+        color = "#FF4C4C";
+        glowClass = "glow-danger";
+      }
+
+      setResult({
+        verdict,
+        confidence,
+        riskLevel,
+        color,
+        glowClass,
+        threats: data.threats || [],
+        safetyTips: data.tips || [],
+        embedded_links: data.embedded_links || [],
+        hidden_links: data.hidden_links || [],
+        source: "Email File",
+        filename: data.filename || file.name
+      });
+    } catch (err) {
+      if (err.response) {
+        setError(
+          err.response.data?.error || "Email file scan failed."
+        );
+      } else {
+        setError(
+          "Cannot reach server. Make sure backend is running."
+        );
+      }
+    } finally {
+      setLoading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
   };
 
   const handleDocumentUpload = async (e) => {
@@ -237,6 +304,7 @@ function AnalyzePage() {
         threats: data.threats || [],
         safetyTips: data.tips || [],
         embedded_links: data.embedded_links || [],
+        hidden_links: data.hidden_links || [],
         source: `${data.extraction_method} Document`,
         filename: data.filename,
         extractedChars: data.extracted_chars
@@ -758,6 +826,89 @@ function AnalyzePage() {
                       }}>
                         {link.top_reason}
                       </span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {result.hidden_links && result.hidden_links.length > 0 && (
+              <div style={{
+                marginTop: "16px",
+                padding: "16px",
+                background: "rgba(255,76,76,0.05)",
+                borderRadius: "10px",
+                border: "1px solid rgba(255,76,76,0.3)"
+              }}>
+                <h4 style={{
+                  color: "#FF4C4C",
+                  marginBottom: "12px",
+                  fontSize: "13px",
+                  textTransform: "uppercase",
+                  letterSpacing: "1px"
+                }}>
+                  ⚠ Hidden Link Threats Detected ({result.hidden_links.length})
+                </h4>
+                <p style={{
+                  color: "#6a88b8",
+                  fontSize: "11px",
+                  marginBottom: "12px"
+                }}>
+                  These links have misleading display text that hides their
+                  real destination.
+                </p>
+                {result.hidden_links.map((link, index) => {
+                  const realUrl = link.real_url || "";
+                  return (
+                    <div key={index} style={{
+                      padding: "10px 14px",
+                      marginBottom: "8px",
+                      background: "rgba(255,76,76,0.08)",
+                      borderRadius: "8px",
+                      border: "1px solid rgba(255,76,76,0.4)"
+                    }}>
+                      <div style={{
+                        display: "flex",
+                        gap: "8px",
+                        alignItems: "flex-start",
+                        marginBottom: "6px"
+                      }}>
+                        <span style={{
+                          background: link.mismatch ? "#FF4C4C" : "#FFC947",
+                          color: "#000",
+                          fontSize: "10px",
+                          fontWeight: "bold",
+                          padding: "2px 6px",
+                          borderRadius: "4px",
+                          minWidth: "80px",
+                          textAlign: "center",
+                          flexShrink: 0
+                        }}>
+                          {link.mismatch ? "DECEPTIVE" : "SUSPICIOUS"}
+                        </span>
+                        <span style={{
+                          color: "#E0E0E0",
+                          fontSize: "12px"
+                        }}>
+                          {link.display_text || "(no text)"}
+                        </span>
+                      </div>
+                      <div style={{
+                        paddingLeft: "88px",
+                        fontSize: "11px"
+                      }}>
+                        <div style={{ color: "#FF4C4C" }}>
+                          Real URL: {realUrl.length > 50
+                            ? realUrl.substring(0, 50) + "..."
+                            : realUrl}
+                        </div>
+                        <div style={{
+                          color: "#6a88b8",
+                          marginTop: "4px"
+                        }}>
+                          {link.reason}
+                        </div>
+                      </div>
                     </div>
                   );
                 })}

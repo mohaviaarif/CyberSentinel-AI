@@ -28,6 +28,30 @@ function extractOpenEmailText() {
   return longestText.trim();
 }
 
+function extractOpenEmailHTML() {
+  // Get the raw HTML of the email body, including
+  // anchor tags and their real href destinations.
+  const emailBodyElements = document.querySelectorAll(
+    'div.a3s.aiL, div[dir="ltr"]'
+  );
+
+  if (emailBodyElements.length === 0) {
+    return null;
+  }
+
+  // Take the largest HTML block (normally the open
+  // message body rather than Gmail interface chrome).
+  let longestHTML = "";
+  emailBodyElements.forEach((el) => {
+    const html = el.innerHTML || "";
+    if (html.length > longestHTML.length) {
+      longestHTML = html;
+    }
+  });
+
+  return longestHTML.trim();
+}
+
 // Listen for messages from the popup asking for
 // the current email's text
 chrome.runtime.onMessage.addListener(
@@ -35,6 +59,10 @@ chrome.runtime.onMessage.addListener(
     if (request.action === "GET_EMAIL_TEXT") {
       const emailText = extractOpenEmailText();
       sendResponse({ emailText: emailText });
+    }
+    if (request.action === "GET_EMAIL_HTML") {
+      const emailHTML = extractOpenEmailHTML();
+      sendResponse({ emailHTML: emailHTML });
     }
     return true;
   }
