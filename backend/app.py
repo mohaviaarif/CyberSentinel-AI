@@ -6,10 +6,17 @@ from routes.malware_routes import malware_bp
 from dotenv import load_dotenv
 import logging
 import os
-import sqlite3
 import hashlib
 
 load_dotenv()
+
+from database import (
+    get_connection,
+    execute_query,
+    fetchall_as_dicts,
+    fetchone_as_dict,
+    init_db as db_init,
+)
 
 # Security
 from security.limiter import limiter
@@ -72,72 +79,8 @@ limiter.init_app(app)
 # 🔐 AUTHENTICATION SYSTEM (Signup + Login)
 # ============================================================
 
-def get_db():
-    conn = sqlite3.connect("users.db")
-    conn.row_factory = sqlite3.Row
-    return conn
-
 def init_db():
-    conn = get_db()
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            email TEXT UNIQUE NOT NULL,
-            password_hash TEXT NOT NULL,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-        )
-    """)
-    user_columns = {
-        row["name"]
-        for row in conn.execute("PRAGMA table_info(users)").fetchall()
-    }
-    if "created_at" not in user_columns:
-        conn.execute("ALTER TABLE users ADD COLUMN created_at DATETIME")
-        conn.execute("""
-            UPDATE users
-            SET created_at = CURRENT_TIMESTAMP
-            WHERE created_at IS NULL
-        """)
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS email_scans (
-            scan_id    INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_email TEXT,
-            input_summary TEXT,
-            prediction TEXT,
-            confidence REAL,
-            threats    TEXT,
-            links_found INTEGER DEFAULT 0,
-            scanned_at DATETIME DEFAULT CURRENT_TIMESTAMP
-        )
-    """)
-
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS url_scans (
-            scan_id    INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_email TEXT,
-            url_scanned TEXT,
-            result     TEXT,
-            score      INTEGER,
-            confidence REAL,
-            scanned_at DATETIME DEFAULT CURRENT_TIMESTAMP
-        )
-    """)
-
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS file_scans (
-            scan_id        INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_email     TEXT,
-            filename       TEXT,
-            sha256_hash    TEXT,
-            verdict        TEXT,
-            malicious_count INTEGER DEFAULT 0,
-            total_engines  INTEGER DEFAULT 0,
-            file_deleted   BOOLEAN DEFAULT 1,
-            scanned_at     DATETIME DEFAULT CURRENT_TIMESTAMP
-        )
-    """)
-    conn.commit()
-    conn.close()
+    db_init()
 
 init_db()
 
@@ -165,17 +108,33 @@ def signup():
     if not email or not password:
         return jsonify({"success": False, "error": "Email and password required."}), 400
 
+    password_hash = hash_password(password)
+
     try:
-        conn = get_db()
-        conn.execute(
-            """
-            INSERT INTO users (email, password_hash, created_at)
-            VALUES (?, ?, CURRENT_TIMESTAMP)
-            """,
-            (email, hash_password(password)),
-        )
-        conn.commit()
-        conn.close()
+        conn, db_type = get_connection()
+        try:
+            cursor = execute_query(
+                conn, db_type,
+                "SELECT id FROM users WHERE email = ?",
+                (email,)
+            )
+            existing = fetchone_as_dict(cursor, db_type)
+            if existing:
+                return jsonify({
+                    "success": False,
+                    "error": "Email already registered."
+                }), 409
+
+            execute_query(
+                conn, db_type,
+                """INSERT INTO users
+                   (email, password_hash)
+                   VALUES (?, ?)""",
+                (email, password_hash)
+            )
+            conn.commit()
+        finally:
+            conn.close()
 
         try:
             from services.notification_service \
@@ -198,12 +157,22 @@ def login():
     email = data.get("email", "").strip().lower()
     password = data.get("password", "")
 
-    conn = get_db()
-    cur = conn.execute("SELECT * FROM users WHERE email = ?", (email,))
-    user = cur.fetchone()
-    conn.close()
+    password_hash = hash_password(password)
 
-    if not user or user["password_hash"] != hash_password(password):
+    conn, db_type = get_connection()
+    try:
+        cursor = execute_query(
+            conn, db_type,
+            """SELECT * FROM users
+               WHERE email = ?
+               AND password_hash = ?""",
+            (email, password_hash)
+        )
+        user = fetchone_as_dict(cursor, db_type)
+    finally:
+        conn.close()
+
+    if not user:
         return jsonify({"success": False, "error": "Invalid email or password."}), 401
 
     return jsonify({
@@ -267,51 +236,62 @@ def internal_error(error):
 @app.route("/api/scan-history", methods=["GET"])
 def get_scan_history():
     try:
-        db_path = os.path.join(
-            os.path.dirname(__file__), "users.db"
-        )
-        conn = sqlite3.connect(db_path)
-        conn.row_factory = sqlite3.Row
+        conn, db_type = get_connection()
+        try:
+            email_cursor = execute_query(
+                conn, db_type,
+                """SELECT 'email' as scan_type,
+                          scan_id,
+                          input_summary as summary,
+                          prediction as result,
+                          confidence,
+                          scanned_at
+                   FROM email_scans
+                   ORDER BY scanned_at DESC
+                   LIMIT 20"""
+            )
+            email_rows = fetchall_as_dicts(
+                email_cursor, db_type
+            )
 
-        email_rows = conn.execute("""
-            SELECT 'email' as scan_type,
-                   scan_id,
-                   input_summary as summary,
-                   prediction as result,
-                   confidence,
-                   scanned_at
-            FROM email_scans
-            ORDER BY scanned_at DESC LIMIT 20
-        """).fetchall()
+            url_cursor = execute_query(
+                conn, db_type,
+                """SELECT 'url' as scan_type,
+                          scan_id,
+                          url_scanned as summary,
+                          result,
+                          confidence,
+                          scanned_at
+                   FROM url_scans
+                   ORDER BY scanned_at DESC
+                   LIMIT 20"""
+            )
+            url_rows = fetchall_as_dicts(
+                url_cursor, db_type
+            )
 
-        url_rows = conn.execute("""
-            SELECT 'url' as scan_type,
-                   scan_id,
-                   url_scanned as summary,
-                   result,
-                   confidence,
-                   scanned_at
-            FROM url_scans
-            ORDER BY scanned_at DESC LIMIT 20
-        """).fetchall()
-
-        file_rows = conn.execute("""
-            SELECT 'file' as scan_type,
-                   scan_id,
-                   filename as summary,
-                   verdict as result,
-                   NULL as confidence,
-                   scanned_at
-            FROM file_scans
-            ORDER BY scanned_at DESC LIMIT 20
-        """).fetchall()
-
-        conn.close()
+            file_cursor = execute_query(
+                conn, db_type,
+                """SELECT 'file' as scan_type,
+                          scan_id,
+                          filename as summary,
+                          verdict as result,
+                          NULL as confidence,
+                          scanned_at
+                   FROM file_scans
+                   ORDER BY scanned_at DESC
+                   LIMIT 20"""
+            )
+            file_rows = fetchall_as_dicts(
+                file_cursor, db_type
+            )
+        finally:
+            conn.close()
 
         all_scans = (
-            [dict(r) for r in email_rows] +
-            [dict(r) for r in url_rows] +
-            [dict(r) for r in file_rows]
+            email_rows +
+            url_rows +
+            file_rows
         )
 
         all_scans.sort(
@@ -365,63 +345,91 @@ def admin_stats():
                 "error": "Unauthorized"
             }), 403
 
-        db_path = os.path.join(
-            os.path.dirname(__file__), "users.db"
-        )
-        conn = sqlite3.connect(db_path)
-        conn.row_factory = sqlite3.Row
+        conn, db_type = get_connection()
+        try:
+            cursor = execute_query(
+                conn, db_type,
+                "SELECT COUNT(*) as count FROM users"
+            )
+            total_users = fetchone_as_dict(
+                cursor, db_type
+            )["count"]
 
-        total_users = conn.execute(
-            "SELECT COUNT(*) as count FROM users"
-        ).fetchone()["count"]
+            cursor = execute_query(
+                conn, db_type,
+                "SELECT COUNT(*) as count FROM email_scans"
+            )
+            total_email_scans = fetchone_as_dict(
+                cursor, db_type
+            )["count"]
 
-        total_email_scans = conn.execute(
-            "SELECT COUNT(*) as count FROM email_scans"
-        ).fetchone()["count"]
+            cursor = execute_query(
+                conn, db_type,
+                "SELECT COUNT(*) as count FROM url_scans"
+            )
+            total_url_scans = fetchone_as_dict(
+                cursor, db_type
+            )["count"]
 
-        total_url_scans = conn.execute(
-            "SELECT COUNT(*) as count FROM url_scans"
-        ).fetchone()["count"]
+            cursor = execute_query(
+                conn, db_type,
+                "SELECT COUNT(*) as count FROM file_scans"
+            )
+            total_file_scans = fetchone_as_dict(
+                cursor, db_type
+            )["count"]
 
-        total_file_scans = conn.execute(
-            "SELECT COUNT(*) as count FROM file_scans"
-        ).fetchone()["count"]
+            cursor = execute_query(
+                conn, db_type,
+                """SELECT COUNT(*) as count FROM email_scans
+                   WHERE prediction = 'spam'"""
+            )
+            phishing_detected = fetchone_as_dict(
+                cursor, db_type
+            )["count"]
 
-        phishing_detected = conn.execute("""
-            SELECT COUNT(*) as count FROM email_scans
-            WHERE prediction = 'spam'
-        """).fetchone()["count"]
+            cursor = execute_query(
+                conn, db_type,
+                """SELECT COUNT(*) as count FROM url_scans
+                   WHERE result = 'malicious'"""
+            )
+            malicious_urls = fetchone_as_dict(
+                cursor, db_type
+            )["count"]
 
-        malicious_urls = conn.execute("""
-            SELECT COUNT(*) as count FROM url_scans
-            WHERE result = 'malicious'
-        """).fetchone()["count"]
+            cursor = execute_query(
+                conn, db_type,
+                """SELECT COUNT(*) as count FROM file_scans
+                   WHERE verdict = 'Malicious'"""
+            )
+            malicious_files = fetchone_as_dict(
+                cursor, db_type
+            )["count"]
 
-        malicious_files = conn.execute("""
-            SELECT COUNT(*) as count FROM file_scans
-            WHERE verdict = 'Malicious'
-        """).fetchone()["count"]
-
-        recent_scans = conn.execute("""
-            SELECT 'email' as type,
-                   prediction as result,
-                   scanned_at
-            FROM email_scans
-            UNION ALL
-            SELECT 'url' as type,
-                   result,
-                   scanned_at
-            FROM url_scans
-            UNION ALL
-            SELECT 'file' as type,
-                   verdict as result,
-                   scanned_at
-            FROM file_scans
-            ORDER BY scanned_at DESC
-            LIMIT 5
-        """).fetchall()
-
-        conn.close()
+            cursor = execute_query(
+                conn, db_type,
+                """SELECT 'email' as type,
+                          prediction as result,
+                          scanned_at
+                   FROM email_scans
+                   UNION ALL
+                   SELECT 'url' as type,
+                          result,
+                          scanned_at
+                   FROM url_scans
+                   UNION ALL
+                   SELECT 'file' as type,
+                          verdict as result,
+                          scanned_at
+                   FROM file_scans
+                   ORDER BY scanned_at DESC
+                   LIMIT 5"""
+            )
+            recent_scans = fetchall_as_dicts(
+                cursor, db_type
+            )
+        finally:
+            conn.close()
 
         return jsonify({
             "success": True,
@@ -444,7 +452,7 @@ def admin_stats():
                 "malicious_urls": malicious_urls,
                 "malicious_files": malicious_files
             },
-            "recent_activity": [dict(row) for row in recent_scans]
+            "recent_activity": recent_scans
         }), 200
 
     except Exception as error:
@@ -470,32 +478,33 @@ def admin_users():
                 "error": "Unauthorized"
             }), 403
 
-        db_path = os.path.join(
-            os.path.dirname(__file__), "users.db"
-        )
-        conn = sqlite3.connect(db_path)
-        conn.row_factory = sqlite3.Row
-
-        users = conn.execute("""
-            SELECT
-                u.email,
-                u.created_at,
-                COUNT(DISTINCT es.scan_id) as email_scans,
-                COUNT(DISTINCT us.scan_id) as url_scans,
-                COUNT(DISTINCT fs.scan_id) as file_scans
-            FROM users u
-            LEFT JOIN email_scans es ON es.user_email = u.email
-            LEFT JOIN url_scans us ON us.user_email = u.email
-            LEFT JOIN file_scans fs ON fs.user_email = u.email
-            GROUP BY u.email, u.created_at
-            ORDER BY u.created_at DESC
-        """).fetchall()
-
-        conn.close()
+        conn, db_type = get_connection()
+        try:
+            cursor = execute_query(
+                conn, db_type,
+                """SELECT
+                          u.email,
+                          u.created_at,
+                          COUNT(DISTINCT es.scan_id) as email_scans,
+                          COUNT(DISTINCT us.scan_id) as url_scans,
+                          COUNT(DISTINCT fs.scan_id) as file_scans
+                   FROM users u
+                   LEFT JOIN email_scans es
+                       ON es.user_email = u.email
+                   LEFT JOIN url_scans us
+                       ON us.user_email = u.email
+                   LEFT JOIN file_scans fs
+                       ON fs.user_email = u.email
+                   GROUP BY u.email, u.created_at
+                   ORDER BY u.created_at DESC"""
+            )
+            users = fetchall_as_dicts(cursor, db_type)
+        finally:
+            conn.close()
 
         return jsonify({
             "success": True,
-            "users": [dict(user) for user in users]
+            "users": users
         }), 200
 
     except Exception as error:
@@ -521,51 +530,53 @@ def admin_scans():
                 "error": "Unauthorized"
             }), 403
 
-        db_path = os.path.join(
-            os.path.dirname(__file__), "users.db"
-        )
-        conn = sqlite3.connect(db_path)
-        conn.row_factory = sqlite3.Row
+        conn, db_type = get_connection()
+        try:
+            cursor = execute_query(
+                conn, db_type,
+                """SELECT 'email' as scan_type,
+                          user_email,
+                          input_summary as summary,
+                          prediction as result,
+                          confidence,
+                          scanned_at
+                   FROM email_scans
+                   ORDER BY scanned_at DESC LIMIT 50"""
+            )
+            email_rows = fetchall_as_dicts(cursor, db_type)
 
-        email_rows = conn.execute("""
-            SELECT 'email' as scan_type,
-                   user_email,
-                   input_summary as summary,
-                   prediction as result,
-                   confidence,
-                   scanned_at
-            FROM email_scans
-            ORDER BY scanned_at DESC LIMIT 50
-        """).fetchall()
+            cursor = execute_query(
+                conn, db_type,
+                """SELECT 'url' as scan_type,
+                          user_email,
+                          url_scanned as summary,
+                          result,
+                          confidence,
+                          scanned_at
+                   FROM url_scans
+                   ORDER BY scanned_at DESC LIMIT 50"""
+            )
+            url_rows = fetchall_as_dicts(cursor, db_type)
 
-        url_rows = conn.execute("""
-            SELECT 'url' as scan_type,
-                   user_email,
-                   url_scanned as summary,
-                   result,
-                   confidence,
-                   scanned_at
-            FROM url_scans
-            ORDER BY scanned_at DESC LIMIT 50
-        """).fetchall()
-
-        file_rows = conn.execute("""
-            SELECT 'file' as scan_type,
-                   user_email,
-                   filename as summary,
-                   verdict as result,
-                   NULL as confidence,
-                   scanned_at
-            FROM file_scans
-            ORDER BY scanned_at DESC LIMIT 50
-        """).fetchall()
-
-        conn.close()
+            cursor = execute_query(
+                conn, db_type,
+                """SELECT 'file' as scan_type,
+                          user_email,
+                          filename as summary,
+                          verdict as result,
+                          NULL as confidence,
+                          scanned_at
+                   FROM file_scans
+                   ORDER BY scanned_at DESC LIMIT 50"""
+            )
+            file_rows = fetchall_as_dicts(cursor, db_type)
+        finally:
+            conn.close()
 
         all_scans = (
-            [dict(row) for row in email_rows] +
-            [dict(row) for row in url_rows] +
-            [dict(row) for row in file_rows]
+            email_rows +
+            url_rows +
+            file_rows
         )
 
         all_scans.sort(
@@ -605,44 +616,68 @@ def public_stats():
     the public dashboard. No auth required.
     """
     try:
-        db_path = os.path.join(
-            os.path.dirname(__file__), "users.db"
-        )
-        conn = sqlite3.connect(db_path)
-        conn.row_factory = sqlite3.Row
+        conn, db_type = get_connection()
+        try:
+            cursor = execute_query(
+                conn, db_type,
+                "SELECT COUNT(*) as c FROM email_scans"
+            )
+            total_email_scans = fetchone_as_dict(
+                cursor, db_type
+            )["c"]
 
-        total_email_scans = conn.execute(
-            "SELECT COUNT(*) as c FROM email_scans"
-        ).fetchone()["c"]
+            cursor = execute_query(
+                conn, db_type,
+                "SELECT COUNT(*) as c FROM url_scans"
+            )
+            total_url_scans = fetchone_as_dict(
+                cursor, db_type
+            )["c"]
 
-        total_url_scans = conn.execute(
-            "SELECT COUNT(*) as c FROM url_scans"
-        ).fetchone()["c"]
+            cursor = execute_query(
+                conn, db_type,
+                "SELECT COUNT(*) as c FROM file_scans"
+            )
+            total_file_scans = fetchone_as_dict(
+                cursor, db_type
+            )["c"]
 
-        total_file_scans = conn.execute(
-            "SELECT COUNT(*) as c FROM file_scans"
-        ).fetchone()["c"]
+            cursor = execute_query(
+                conn, db_type,
+                """SELECT COUNT(*) as c FROM email_scans
+                   WHERE prediction = 'spam'"""
+            )
+            phishing_detected = fetchone_as_dict(
+                cursor, db_type
+            )["c"]
 
-        phishing_detected = conn.execute("""
-            SELECT COUNT(*) as c FROM email_scans
-            WHERE prediction = 'spam'
-        """).fetchone()["c"]
+            cursor = execute_query(
+                conn, db_type,
+                """SELECT COUNT(*) as c FROM url_scans
+                   WHERE result = 'malicious'"""
+            )
+            malicious_urls = fetchone_as_dict(
+                cursor, db_type
+            )["c"]
 
-        malicious_urls = conn.execute("""
-            SELECT COUNT(*) as c FROM url_scans
-            WHERE result = 'malicious'
-        """).fetchone()["c"]
+            cursor = execute_query(
+                conn, db_type,
+                """SELECT COUNT(*) as c FROM file_scans
+                   WHERE verdict = 'Malicious'"""
+            )
+            malicious_files = fetchone_as_dict(
+                cursor, db_type
+            )["c"]
 
-        malicious_files = conn.execute("""
-            SELECT COUNT(*) as c FROM file_scans
-            WHERE verdict = 'Malicious'
-        """).fetchone()["c"]
-
-        total_users = conn.execute(
-            "SELECT COUNT(*) as c FROM users"
-        ).fetchone()["c"]
-
-        conn.close()
+            cursor = execute_query(
+                conn, db_type,
+                "SELECT COUNT(*) as c FROM users"
+            )
+            total_users = fetchone_as_dict(
+                cursor, db_type
+            )["c"]
+        finally:
+            conn.close()
 
         total_scans = (
             total_email_scans +

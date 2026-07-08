@@ -3,7 +3,6 @@ from services.prediction_service import predict_email
 from security.limiter import limiter
 import time
 import os
-import sqlite3
 
 predict_bp = Blueprint("predict", __name__)
 
@@ -68,30 +67,38 @@ def predict():
 
         # ✅ FIXED RESPONSE FORMAT (MATCHES TEST SCRIPT)
         try:
+            from database import (
+                get_connection, execute_query
+            )
             user_email = request.headers.get(
                 "X-User-Email", "anonymous"
             )
-            input_summary = text[:100] + "..." if len(text) > 100 else text
-            db_path = os.path.join(
-                os.path.dirname(os.path.dirname(__file__)),
-                "users.db"
+            input_summary = (
+                text[:100] + "..."
+                if len(text) > 100
+                else text
             )
-            conn = sqlite3.connect(db_path)
-            conn.execute("""
-                INSERT INTO email_scans
-                (user_email, input_summary, prediction,
-                 confidence, threats, links_found)
-                VALUES (?, ?, ?, ?, ?, ?)
-            """, (
-                user_email,
-                input_summary,
-                label,
-                confidence,
-                str(threats),
-                len(embedded_links)
-            ))
-            conn.commit()
-            conn.close()
+            conn, db_type = get_connection()
+            try:
+                execute_query(
+                    conn, db_type,
+                    """INSERT INTO email_scans
+                       (user_email, input_summary,
+                        prediction, confidence,
+                        threats, links_found)
+                       VALUES (?, ?, ?, ?, ?, ?)""",
+                    (
+                        user_email,
+                        input_summary,
+                        label,
+                        confidence,
+                        str(threats),
+                        len(embedded_links)
+                    )
+                )
+                conn.commit()
+            finally:
+                conn.close()
         except Exception as db_err:
             current_app.logger.error(
                 f"Failed to save email scan: {db_err}"
@@ -189,6 +196,43 @@ def scan_email_file():
         )
 
         result = predict_email(email_text)
+
+        try:
+            from database import (
+                get_connection, execute_query
+            )
+            user_email = request.headers.get(
+                "X-User-Email", "anonymous"
+            )
+            input_summary = (
+                f"[Email File] {filename}: " +
+                email_text[:80] + "..."
+            )
+            conn, db_type = get_connection()
+            try:
+                execute_query(
+                    conn, db_type,
+                    """INSERT INTO email_scans
+                       (user_email, input_summary,
+                        prediction, confidence,
+                        threats, links_found)
+                       VALUES (?, ?, ?, ?, ?, ?)""",
+                    (
+                        user_email,
+                        input_summary,
+                        result["prediction"],
+                        result["confidence"],
+                        str(result.get("threats", [])),
+                        len(result.get("embedded_links", []))
+                    )
+                )
+                conn.commit()
+            finally:
+                conn.close()
+        except Exception as db_err:
+            current_app.logger.error(
+                f"Failed to save email file scan: {db_err}"
+            )
 
         current_app.logger.info(
             f"Email file scan complete: {filename} | "
@@ -353,32 +397,34 @@ def scan_document():
 
         # Save to database
         try:
-            db_path = os.path.join(
-                os.path.dirname(
-                    os.path.dirname(__file__)
-                ),
-                "users.db"
+            from database import (
+                get_connection, execute_query
             )
-            conn = sqlite3.connect(db_path)
             input_summary = (
                 f"[{extraction_method}] {filename}: " +
                 extracted_text[:80] + "..."
             )
-            conn.execute("""
-                INSERT INTO email_scans
-                (user_email, input_summary, prediction,
-                 confidence, threats, links_found)
-                VALUES (?, ?, ?, ?, ?, ?)
-            """, (
-                user_email,
-                input_summary,
-                result["prediction"],
-                result["confidence"],
-                str(result.get("threats", [])),
-                len(result.get("embedded_links", []))
-            ))
-            conn.commit()
-            conn.close()
+            conn, db_type = get_connection()
+            try:
+                execute_query(
+                    conn, db_type,
+                    """INSERT INTO email_scans
+                       (user_email, input_summary,
+                        prediction, confidence,
+                        threats, links_found)
+                       VALUES (?, ?, ?, ?, ?, ?)""",
+                    (
+                        user_email,
+                        input_summary,
+                        result["prediction"],
+                        result["confidence"],
+                        str(result.get("threats", [])),
+                        len(result.get("embedded_links", []))
+                    )
+                )
+                conn.commit()
+            finally:
+                conn.close()
         except Exception as db_err:
             current_app.logger.error(
                 f"DB save failed: {db_err}"

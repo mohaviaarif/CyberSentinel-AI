@@ -1,8 +1,6 @@
 from flask import Blueprint, request, jsonify, current_app
 from services.url_service import URLAnalyzer
 from security.limiter import limiter
-import sqlite3
-import os
 
 url_bp = Blueprint("url_bp", __name__)
 analyzer = URLAnalyzer()
@@ -57,28 +55,31 @@ def scan_url():
 
         # ✅ FIX: directly return result (NO inner, NO remapping)
         try:
+            from database import (
+                get_connection, execute_query
+            )
             user_email = request.headers.get(
                 "X-User-Email", "anonymous"
             )
-            db_path = os.path.join(
-                os.path.dirname(os.path.dirname(__file__)),
-                "users.db"
-            )
-            conn = sqlite3.connect(db_path)
-            conn.execute("""
-                INSERT INTO url_scans
-                (user_email, url_scanned, result,
-                 score, confidence)
-                VALUES (?, ?, ?, ?, ?)
-            """, (
-                user_email,
-                url,
-                result.get("result", "unknown"),
-                result.get("score", 0),
-                result.get("confidence", 0.0)
-            ))
-            conn.commit()
-            conn.close()
+            conn, db_type = get_connection()
+            try:
+                execute_query(
+                    conn, db_type,
+                    """INSERT INTO url_scans
+                       (user_email, url_scanned,
+                        result, score, confidence)
+                       VALUES (?, ?, ?, ?, ?)""",
+                    (
+                        user_email,
+                        url,
+                        result.get("result", "unknown"),
+                        result.get("score", 0),
+                        result.get("confidence", 0.0)
+                    )
+                )
+                conn.commit()
+            finally:
+                conn.close()
         except Exception as db_err:
             current_app.logger.error(
                 f"Failed to save URL scan: {db_err}"
