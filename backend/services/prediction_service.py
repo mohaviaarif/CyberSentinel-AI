@@ -74,6 +74,31 @@ def analyze_embedded_links(raw_text, max_links=5):
         for url in urls_to_check:
             try:
                 result = url_analyzer_instance.analyze(url)
+                try:
+                    from database import get_connection, execute_query
+                    conn, db_type = get_connection()
+                    try:
+                        execute_query(
+                            conn, db_type,
+                            """INSERT INTO url_scans
+                               (user_email, url_scanned,
+                                result, score, confidence)
+                               VALUES (?, ?, ?, ?, ?)""",
+                            (
+                                "embedded-scan",
+                                url,
+                                result.get("result", "unknown"),
+                                result.get("score", 0),
+                                result.get("confidence", 0.0)
+                            )
+                        )
+                        conn.commit()
+                    finally:
+                        conn.close()
+                except Exception as db_err:
+                    logger.error(
+                        f"Failed to save embedded URL: {db_err}"
+                    )
                 indicators = result.get("threat_indicators", [])
                 top_reason = (
                     indicators[0]
