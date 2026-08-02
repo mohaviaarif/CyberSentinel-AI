@@ -52,6 +52,31 @@ function extractOpenEmailHTML() {
   return longestHTML.trim();
 }
 
+function extractSenderEmail() {
+  const selectors = [
+    '[data-hovercard-id]',
+    '.gD',
+    '[email]'
+  ];
+
+  for (const selector of selectors) {
+    const elements = document.querySelectorAll(
+      selector
+    );
+    for (const el of elements) {
+      const email = (
+        el.getAttribute('email') ||
+        el.getAttribute('data-hovercard-id') ||
+        ''
+      ).toLowerCase();
+      if (email && email.includes('@')) {
+        return email;
+      }
+    }
+  }
+  return null;
+}
+
 // Listen for messages from the popup asking for
 // the current email's text
 chrome.runtime.onMessage.addListener(
@@ -63,6 +88,10 @@ chrome.runtime.onMessage.addListener(
     if (request.action === "GET_EMAIL_HTML") {
       const emailHTML = extractOpenEmailHTML();
       sendResponse({ emailHTML: emailHTML });
+    }
+    if (request.action === "GET_SENDER_EMAIL") {
+      const sender = extractSenderEmail();
+      sendResponse({ senderEmail: sender });
     }
     return true;
   }

@@ -1,5 +1,38 @@
 const API_BASE = "https://cybersentinel-ai-backend.onrender.com";
 
+const TRUSTED_SENDERS = [
+  "google.com",
+  "gmail.com",
+  "googlemail.com",
+  "accounts.google.com",
+  "youtube.com",
+  "microsoft.com",
+  "outlook.com",
+  "hotmail.com",
+  "live.com",
+  "office.com",
+  "apple.com",
+  "icloud.com",
+  "amazon.com",
+  "linkedin.com",
+  "github.com",
+  "facebook.com",
+  "instagram.com",
+  "twitter.com",
+  "comsats.edu.pk",
+  "edu.pk",
+  "gov.pk"
+];
+
+function isTrustedSender(email) {
+  if (!email) return false;
+  const domain = email.split('@')[1] || '';
+  return TRUSTED_SENDERS.some(trusted =>
+    domain === trusted ||
+    domain.endsWith('.' + trusted)
+  );
+}
+
 const scanBtn = document.getElementById("scanBtn");
 const statusText = document.getElementById("statusText");
 const resultDiv = document.getElementById("result");
@@ -25,109 +58,44 @@ scanBtn.addEventListener("click", async () => {
       return;
     }
 
-    // Ask content script for the email text
+    // Check sender first
     chrome.tabs.sendMessage(
       tab.id,
-      { action: "GET_EMAIL_TEXT" },
-      async (response) => {
-        if (chrome.runtime.lastError || !response || !response.emailText) {
-          statusText.textContent = 
-            "Could not read email. Open an email first.";
-          statusText.className = "error-text";
-          scanBtn.disabled = false;
-          return;
-        }
+      { action: "GET_SENDER_EMAIL" },
+      (senderRes) => {
+        const senderEmail =
+          senderRes?.senderEmail || null;
 
-        const emailText = response.emailText;
-
-        if (emailText.length < 10) {
-          statusText.textContent = 
-            "Email content too short to analyze.";
-          statusText.className = "error-text";
-          scanBtn.disabled = false;
-          return;
-        }
-
-        statusText.textContent = 
-          "Analyzing with CyberSentinel AI... (may take a few seconds)";
-
-        try {
-          const res = await fetch(`${API_BASE}/predict`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ text: emailText.slice(0, 5000) })
-          });
-
-          const data = await res.json();
-
-          if (!res.ok) {
-            statusText.textContent = 
-              data.error || "Scan failed. Try again.";
-            statusText.className = "error-text";
-            scanBtn.disabled = false;
-            return;
-          }
-
-          renderResult(data);
+        if (isTrustedSender(senderEmail)) {
           statusText.textContent = "";
+          resultDiv.innerHTML = `
+            <div class="verdict-badge safe"
+                 style="margin-bottom:10px;">
+              ✅ TRUSTED SENDER
+            </div>
+            <div class="confidence">
+              From: ${escapeHTML(senderEmail ||
+                      "verified domain")}
+            </div>
+            <div style="font-size:11px;
+                        color:#6a88b8;
+                        margin-top:8px;
+                        line-height:1.5;">
+              This email is from a verified
+              trusted domain. Our AI model
+              is trained on phishing patterns
+              and may produce false positives
+              on legitimate corporate emails.
+            </div>
+          `;
+          resultDiv.style.display = "block";
           scanBtn.disabled = false;
-
-          // Step 2: Extract hidden links from the raw email HTML.
-          try {
-            chrome.tabs.sendMessage(
-              tab.id,
-              { action: "GET_EMAIL_HTML" },
-              async (htmlResponse) => {
-                if (
-                  chrome.runtime.lastError ||
-                  !htmlResponse ||
-                  !htmlResponse.emailHTML
-                ) {
-                  return;
-                }
-
-                const emailHTML = htmlResponse.emailHTML;
-                if (emailHTML.length < 50) return;
-
-                try {
-                  const hiddenRes = await fetch(
-                    `${API_BASE}/api/extract-hidden-links`,
-                    {
-                      method: "POST",
-                      headers: {
-                        "Content-Type": "application/json"
-                      },
-                      body: JSON.stringify({
-                        html: emailHTML.slice(0, 10000)
-                      })
-                    }
-                  );
-
-                  if (!hiddenRes.ok) return;
-
-                  const hiddenData = await hiddenRes.json();
-                  if (
-                    hiddenData.hidden_links &&
-                    hiddenData.hidden_links.length > 0
-                  ) {
-                    renderHiddenLinks(hiddenData.hidden_links);
-                  }
-                } catch (err) {
-                  console.log("Hidden link scan failed:", err);
-                }
-              }
-            );
-          } catch (err) {
-            console.log("HTML extraction failed:", err);
-          }
-
-        } catch (err) {
-          statusText.textContent = 
-            "Could not reach CyberSentinel AI server. " +
-            "It may be waking up — try again in 30 seconds.";
-          statusText.className = "error-text";
-          scanBtn.disabled = false;
+          return;
         }
+
+        // If not trusted, continue with
+        // normal phishing scan below
+        proceedWithScan(tab);
       }
     );
 
@@ -138,8 +106,116 @@ scanBtn.addEventListener("click", async () => {
   }
 });
 
+async function proceedWithScan(tab) {
+  // Ask content script for the email text
+  chrome.tabs.sendMessage(
+    tab.id,
+    { action: "GET_EMAIL_TEXT" },
+    async (response) => {
+      if (chrome.runtime.lastError || !response || !response.emailText) {
+        statusText.textContent =
+          "Could not read email. Open an email first.";
+        statusText.className = "error-text";
+        scanBtn.disabled = false;
+        return;
+      }
+
+      const emailText = response.emailText;
+
+      if (emailText.length < 10) {
+        statusText.textContent =
+          "Email content too short to analyze.";
+        statusText.className = "error-text";
+        scanBtn.disabled = false;
+        return;
+      }
+
+      statusText.textContent =
+        "Analyzing with CyberSentinel AI... (may take a few seconds)";
+
+      try {
+        const res = await fetch(`${API_BASE}/predict`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: emailText.slice(0, 5000) })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          statusText.textContent =
+            data.error || "Scan failed. Try again.";
+          statusText.className = "error-text";
+          scanBtn.disabled = false;
+          return;
+        }
+
+        renderResult(data);
+        statusText.textContent = "";
+        scanBtn.disabled = false;
+
+        // Step 2: Extract hidden links from the raw email HTML.
+        try {
+          chrome.tabs.sendMessage(
+            tab.id,
+            { action: "GET_EMAIL_HTML" },
+            async (htmlResponse) => {
+              if (
+                chrome.runtime.lastError ||
+                !htmlResponse ||
+                !htmlResponse.emailHTML
+              ) {
+                return;
+              }
+
+              const emailHTML = htmlResponse.emailHTML;
+              if (emailHTML.length < 50) return;
+
+              try {
+                const hiddenRes = await fetch(
+                  `${API_BASE}/api/extract-hidden-links`,
+                  {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                      html: emailHTML.slice(0, 10000)
+                    })
+                  }
+                );
+
+                if (!hiddenRes.ok) return;
+
+                const hiddenData = await hiddenRes.json();
+                if (
+                  hiddenData.hidden_links &&
+                  hiddenData.hidden_links.length > 0
+                ) {
+                  renderHiddenLinks(hiddenData.hidden_links);
+                }
+              } catch (err) {
+                console.log("Hidden link scan failed:", err);
+              }
+            }
+          );
+        } catch (err) {
+          console.log("HTML extraction failed:", err);
+        }
+
+      } catch (err) {
+        statusText.textContent =
+          "Could not reach CyberSentinel AI server. " +
+          "It may be waking up - try again in 30 seconds.";
+        statusText.className = "error-text";
+        scanBtn.disabled = false;
+      }
+    }
+  );
+}
+
 function renderResult(data) {
-  const isPhishing = 
+  const isPhishing =
     data.prediction === "spam" || data.prediction === "phishing";
 
   let html = `
